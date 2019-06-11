@@ -4,7 +4,7 @@
         <div class="user-info">
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <img class="user-logo" :src="face"> {{loginName}}
+                    <img class="user-logo" :src="avatar"> {{loginName}}
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="getUserInf">个人信息</el-dropdown-item>
@@ -16,7 +16,7 @@
                 <el-form :model="viewInfo" ref="viewForm" :label-position="labelPosition" label-width="120px">
                     <el-card>
                         <span>用户信息:</span>
-                        <hr class="split" />
+                        <hr class="split"/>
                         <div class="card-context">
                             <el-row :gutter="10">
                                 <el-col :span="10">
@@ -68,7 +68,7 @@
                 <el-form :model="editInfo" ref="viewForm" :label-position="labelPosition" label-width="120px">
                     <el-card>
                         <span>请输入密码:</span>
-                        <hr class="split" />
+                        <hr class="split"/>
                         <div class="card-context">
                             <el-row :gutter="10">
                                 <el-col :span="10">
@@ -79,7 +79,7 @@
                                         <el-input v-model="editInfo.newPwd" size="small"></el-input>
                                     </el-form-item>
                                     <el-form-item label="重复新密码:">
-                                        <el-input v-model="editInfo.newPwdC" size="small"></el-input>
+                                        <el-input v-model="editInfo.confirmPwd" size="small"></el-input>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="10" :offset="1">
@@ -97,157 +97,163 @@
     </div>
 </template>
 <script>
-export default {
-    data () {
-        return {
-            appName: '',
-            loginName: '',
-            face: '',
-            viewFormVisible: false,
-            labelPosition: 'left',
-            viewInfo: {
-                userDtl: {},
-                loginLog: []
+    import {Base64} from 'js-base64'
+    export default {
+        data() {
+            return {
+                appName: '',
+                loginName: '',
+                avatar: '',
+                viewFormVisible: false,
+                labelPosition: 'left',
+                viewInfo: {
+                    userDtl: {},
+                    loginLog: []
+                },
+                editInfo: {},
+                editRules: {},
+                editFormVisible: false
+            }
+        },
+        created() {
+            this.appName = localStorage.getItem('appName')
+            this.loginName = localStorage.getItem('loginName')
+            this.avatar = localStorage.getItem('avatar')
+        },
+        methods: {
+            handleCommand(command) {
+                if (command == 'getUserInf') {
+                    this.viewFormVisible = true
+                    this.queryDtl()
+                } else if (command == 'updatePwd') {
+                    this.editFormVisible = true
+                } else if (command == 'loginout') {
+                    this.loginOut()
+                }
             },
-            editInfo: {},
-            editRules: {},
-            editFormVisible: false
-        }
-    },
-    created () {
-        this.appName = localStorage.getItem('appName')
-        this.loginName = localStorage.getItem('loginName')
-        this.face = localStorage.getItem('face')
-    },
-    methods: {
-        handleCommand (command) {
-            if (command == 'getUserInf') {
-                this.viewFormVisible = true
-                this.queryDtl()
-            } else if (command == 'updatePwd') {
-                this.editFormVisible = true
-            } else if (command == 'loginout') {
-                this.loginOut()
-            }
-        },
-        queryDtl () {
-            const self = this
-            let input = {
-                SYUSRCIDX: [
-                    {
-                        userCid: localStorage.getItem('userCid')
-                    }
-                ]
-            }
-            self.$http
-                .post('/sys/user/queryUserDetail', input)
-                .then(function (res) {
-                    let pkgOut = res.data
-                    self.viewInfo = {
-                        userDtl: pkgOut.SYUSRDTLZ[0],
-                        loginLog: pkgOut.SYLOGINLOGZ
-                    }
-                })
-                .catch((err) => {
-                    console.log(err)
-                    self.$alert(err, '提示', {
-                        confirmButtonText: '确定'
+            queryDtl() {
+                const self = this
+                let input = {
+                    SYUSRCIDX: [
+                        {
+                            userCid: localStorage.getItem('userCid')
+                        }
+                    ]
+                }
+                self.$http
+                    .post('/sys/user/queryUserDetail', input)
+                    .then(function (res) {
+                        let pkgOut = res.data
+                        self.viewInfo = {
+                            userDtl: pkgOut.SYUSRDTLZ[0],
+                            loginLog: pkgOut.SYLOGINLOGZ
+                        }
                     })
-                })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定'
+                        })
+                    })
 
-        },
-        loginOut () {
-            const self = this
-            let input = {
-                SYLOGOUTX: [
-                    {
-                        userCid: localStorage.getItem('userCid')
-                    }
-                ]
-            }
-            self.$http
-                .post('/sys/user/logout', input)
-                .then(function (response) {
-                    localStorage.removeItem('userCid')
-                    localStorage.removeItem('loginName')
-                    localStorage.removeItem('face')
-                    localStorage.removeItem('signKey')
-                    self.$router.push('/login')
-                })
-                .catch((err) => {
-                    console.log(err)
-                    self.$alert(err, '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                })
+            },
+            loginOut() {
+                const self = this
+                let input = {
+                    id: localStorage.getItem('userId'),
+                    token: localStorage.getItem('token')
+                }
 
-        },
-        updatePwd () {
-            const self = this
-            self.editInfo.userCid = localStorage.getItem('userCid')
-            let input = {
-                SYUPDPWDX: [self.editInfo]
+
+                self.$http
+                    .post('/user/logout', input)
+                    .then(function (response) {
+                        localStorage.removeItem('userId')
+                        localStorage.removeItem('loginName')
+                        localStorage.removeItem('avatar')
+                        localStorage.removeItem('token')
+                        self.$router.push('/login')
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
+
+            },
+            updatePwd() {
+                const self = this
+                self.editInfo.id = localStorage.getItem('userId')
+                self.editInfo.oldPwd = Base64.encode(self.editInfo.oldPwd)
+                self.editInfo.newPwd = Base64.encode(self.editInfo.newPwd)
+                self.editInfo.confirmPwd = Base64.encode(self.editInfo.confirmPwd)
+                let input = self.editInfo
+                self.$http
+                    .post('/user/modify_pwd', input)
+                    .then(function (res) {
+                        self.editFormVisible = false
+                        self.loginOut()
+                        self.$message({
+                            message: '修改密码成功，请重新登录',
+                            type: 'success'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
             }
-            self.$http
-                .post('/sys/user/updatePwd', input)
-                .then(function (res) {
-                    self.editFormVisible = false
-                    self.loginOut()
-                    self.$message({
-                        message: '修改密码成功，请重新登录',
-                        type: 'success'
-                    })
-                })
-                .catch((err) => {
-                    console.log(err)
-                    self.$alert(err, '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                })
         }
     }
-}
 </script>
 <style scoped>
-.header {
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-  height: 70px;
-  font-size: 22px;
-  line-height: 70px;
-  color: #fff;
-}
-.header .logo {
-  float: left;
-  width: 500px;
-  text-align: center;
-}
-.user-info {
-  float: right;
-  padding-right: 50px;
-  font-size: 16px;
-  color: #fff;
-}
-.user-info .el-dropdown-link {
-  position: relative;
-  display: inline-block;
-  padding-left: 50px;
-  color: #fff;
-  cursor: pointer;
-  vertical-align: middle;
-}
-.user-info .user-logo {
-  position: absolute;
-  left: 0;
-  top: 15px;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-}
-.el-dropdown-menu__item {
-  text-align: center;
-}
+    .header {
+        position: relative;
+        box-sizing: border-box;
+        width: 100%;
+        height: 70px;
+        font-size: 22px;
+        line-height: 70px;
+        color: #fff;
+    }
+
+    .header .logo {
+        float: left;
+        width: 500px;
+        text-align: center;
+    }
+
+    .user-info {
+        float: right;
+        padding-right: 50px;
+        font-size: 16px;
+        color: #fff;
+    }
+
+    .user-info .el-dropdown-link {
+        position: relative;
+        display: inline-block;
+        padding-left: 50px;
+        color: #fff;
+        cursor: pointer;
+        vertical-align: middle;
+    }
+
+    .user-info .user-logo {
+        position: absolute;
+        left: 0;
+        top: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+    }
+
+    .el-dropdown-menu__item {
+        text-align: center;
+    }
 </style>

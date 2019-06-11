@@ -4,33 +4,33 @@
             <template v-for="menu in menus">
                 <!-- 包含子菜单的一级菜单-->
                 <template v-if="menu.subMenus">
-                    <el-submenu :index="menu.index" :key="menu.index">
+                    <el-submenu :index="menu.url" :key="menu.url">
                         <template slot="title">
                             <i :class="menu.icon"></i>{{ menu.title }}
                         </template>
                         <template v-for="subMenu in menu.subMenus">
                             <!-- 包含子菜单的二级菜单 -->
                             <template v-if="subMenu.subMenus">
-                                <el-submenu :key="subMenu.index" :index="subMenu.index">
+                                <el-submenu :key="subMenu.url" :index="subMenu.url">
                                     <template slot="title">
                                         <i :class="subMenu.icon"></i>{{ subMenu.title }}
                                     </template>
                                     <template v-for="subSubMenu in subMenu.subMenus">
                                         <!-- 包含子菜单的三级菜单 -->
                                         <template v-if="subSubMenu.subMenus">
-                                            <el-submenu :index="subSubMenu.index" :key="subSubMenu.index" :title="subSubMenu.title">
+                                            <el-submenu :index="subSubMenu.url" :key="subSubMenu.url" :title="subSubMenu.title">
                                                 <template slot="title">
                                                     <i :class="subSubMenu.icon"></i>{{ subSubMenu.title }}
                                                 </template>
                                                 <!-- 四级菜单 -->
-                                                <el-menu-item v-for="item in subSubMenu.subMenus" :index="item.index" :key="item.index">
+                                                <el-menu-item v-for="item in subSubMenu.subMenus" :index="item.url" :key="item.url">
                                                     {{ item.title }}
                                                 </el-menu-item>
                                             </el-submenu>
                                         </template>
                                         <!-- 无子菜单的三级菜单 -->
                                         <template v-else>
-                                            <el-menu-item :index="subSubMenu.index" :key="subSubMenu.index">
+                                            <el-menu-item :index="subSubMenu.url" :key="subSubMenu.url">
                                                 {{ subSubMenu.title }}
                                             </el-menu-item>
                                         </template>
@@ -39,7 +39,7 @@
                             </template>
                             <!-- 无子菜单的二级菜单 -->
                             <template v-else>
-                                <el-menu-item :index="subMenu.index" :key="subMenu.index">
+                                <el-menu-item :index="subMenu.url" :key="subMenu.url">
                                     <i :class="subMenu.icon"></i>{{ subMenu.title }}
                                 </el-menu-item>
                             </template>
@@ -48,7 +48,7 @@
                 </template>
                 <!-- 无子菜单的一级菜单-->
                 <template v-else>
-                    <el-menu-item :index="menu.index" :key="menu.index">
+                    <el-menu-item :index="menu.url" :key="menu.url">
                         <i :class="menu.icon"></i>{{ menu.title }}
                     </el-menu-item>
                 </template>
@@ -66,28 +66,28 @@ export default {
     },
     created () {
         const self = this
-        let userCid = localStorage.getItem('userCid')
-        let input = { SYUSRCIDX: [{ 'userCid': userCid }] }
+        let userId = localStorage.getItem('userId')
+        let input = { 'userId': userId }
         self.$http
-            .post('/sys/user/queryUserMenu', input)
+            .post('/menu/get_user_menus', input)
             .then(function (response) {
                 let pkgOut = response.data
-                let menuArray = pkgOut.SYMENUINFY
+                let menuArray = pkgOut.data
                 if (menuArray != null && menuArray.length > 0) {
                     for (let index = 0; index < menuArray.length; index++) {
                         const element = menuArray[index];
                         if (element.deep == 0) {
                             let node = {}
+                            node.id = element.id
                             node.menuCode = element.menuCode
                             node.title = element.title
-                            node.fatMenu = element.fatMenu
-                            node.rootMenu = element.rootMenu
+                            node.fatherCode = element.fatherCode
+                            node.rootCode = element.rootCode
                             node.deep = element.deep
                             node.seq = element.seq
-                            node.index = element.index
+                            node.url = element.url
                             node.icon = element.icon
                             node.state = element.state
-                            node.state_G = element.state_G
                             //构造菜单树的子树
                             node.subMenus = self.getSubMenus(node, menuArray)
                             self.menus.push(node)
@@ -126,28 +126,28 @@ export default {
                                 if (itemGroup.items != undefined && itemGroup.items.length > 0) {
                                     for (let l = 0; l < itemGroup.items.length; l++) {
                                         const item = itemGroup.items[l]
-                                        if (item.index == index) {
+                                        if (item.url == index) {
                                             crumbs = [item].concat(crumbs)
                                             flag = true
                                             break
                                         }
                                     }
                                 }
-                                if (flag || itemGroup.index == index) {
+                                if (flag || itemGroup.url == index) {
                                     crumbs = [itemGroup].concat(crumbs)
                                     flag = true
                                     break
                                 }
                             }
                         }
-                        if (flag || subMenu.index == index) {
+                        if (flag || subMenu.url == index) {
                             crumbs = [subMenu].concat(crumbs)
                             flag = true
                             break
                         }
                     }
                 }
-                if (flag || menu.index == index) {
+                if (flag || menu.url == index) {
                     crumbs = [menu].concat(crumbs)
                     break
                 }
@@ -159,18 +159,18 @@ export default {
             if (menuArray != null && menuArray.length > 0) {
                 for (let index = 0; index < menuArray.length; index++) {
                     const element = menuArray[index];
-                    if (node.menuCode == element.fatMenu) {
+                    if (node.menuCode == element.fatherCode) {
                         let item = {}
+                        item.id = element.id
                         item.menuCode = element.menuCode
                         item.title = element.title
-                        item.fatMenu = element.fatMenu
-                        item.rootMenu = element.rootMenu
+                        item.fatherCode = element.fatherCode
+                        item.rootCode = element.rootCode
                         item.deep = element.deep
                         item.seq = element.seq
-                        item.index = element.index
+                        item.url = element.url
                         item.icon = element.icon
                         item.state = element.state
-                        item.state_G = element.state_G
                         item.subMenus = this.getSubMenus(item, menuArray)
                         if (subArray == null) {
                             subArray = []
@@ -192,7 +192,7 @@ export default {
   width: 250px;
   left: 0;
   top: 70px;
-  bottom: 64px;
+  bottom: 0;
   /* background: #2e363f; */
   background: #409eff;
   overflow-y: scroll;
