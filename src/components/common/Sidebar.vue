@@ -69,7 +69,7 @@ export default {
         let userId = localStorage.getItem('userId')
         let input = { 'userId': userId }
         self.$http
-            .post('/menu/get_user_menus', input)
+            .post('/eops/menu/get_user_menus', input)
             .then(function (response) {
                 let pkgOut = response.data
                 let menuArray = pkgOut.data

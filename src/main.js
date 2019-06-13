@@ -17,14 +17,13 @@ Vue.use(ElementUI)
 //全局系统名称
 localStorage.setItem('appName', '后台管理系统')
 //通信配置
-axios.defaults.baseURL = '/eops'
+axios.defaults.baseURL = process.env.BASE_URL
 // axios.defaults.baseURL = '/mock'
 axios.defaults.withCredentials = true
 // 请求拦截
 axios.interceptors.request.use(
     function (config) {
         // 组装报文：加签
-        let url = config.url
         let client = 'web'
         let reqId = uuid()
         let token = localStorage.getItem('token')
@@ -33,17 +32,33 @@ axios.interceptors.request.use(
         let time = moment().format('YYYY-MM-DD HH:mm:ss')
         let signature = ''
         if (token) {
-            signature = sha256(url + time + reqId + token)
+            signature = sha256(time + reqId + token)
         }
-        config.headers = {
-            'client': client,
-            'req_id': reqId,
-            'req_time': time,
-            'x-token': token,
-            'user_id': userId,
-            'login_name': loginName,
-            'signature': signature
+
+        config.headers.client = client
+        config.headers.req_id = reqId
+        config.headers.req_time = time
+        if (token) {
+            config.headers.x_token = token
         }
+        if (userId) {
+            config.headers.user_id = userId
+        }
+        if (loginName) {
+            config.headers.login_name = loginName
+        }
+        if (signature) {
+            config.headers.signature = signature
+        }
+        // config.headers = {
+        //     'client': client,
+        //     'req_id': reqId,
+        //     'req_time': time,
+        //     'x_token': token,
+        //     'user_id': userId,
+        //     'login_name': loginName,
+        //     'signature': signature
+        // }
         return config
     },
     function (error) {

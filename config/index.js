@@ -4,10 +4,10 @@ var path = require('path')
 module.exports = {
     build: {
         env: require('./prod.env'),
-        index: path.resolve(__dirname, 'D:/apache-tomcat-8.5.20/webapps/ROOT/index.html'),
-        assetsRoot: path.resolve(__dirname, 'D:/apache-tomcat-8.5.20/webapps/ROOT'),
+        index: path.resolve(__dirname, '../deploy/eops-web/index.html'),
+        assetsRoot: path.resolve(__dirname, '../deploy/eops-web'),
         assetsSubDirectory: 'static',
-        assetsPublicPath: '/',
+        assetsPublicPath: './',
         productionSourceMap: false,
         // Gzip off by default as many popular static hosts such as
         // Surge or Netlify already gzip all static assets for you.

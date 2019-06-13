@@ -166,7 +166,7 @@
 
 
                 self.$http
-                    .post('/user/logout', input)
+                    .post('/eops/user/logout', input)
                     .then(function (response) {
                         localStorage.removeItem('userId')
                         localStorage.removeItem('loginName')
@@ -191,7 +191,7 @@
                 self.editInfo.confirmPwd = Base64.encode(self.editInfo.confirmPwd)
                 let input = self.editInfo
                 self.$http
-                    .post('/user/modify_pwd', input)
+                    .post('/eops/user/modify_pwd', input)
                     .then(function (res) {
                         self.editFormVisible = false
                         self.loginOut()

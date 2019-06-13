@@ -145,7 +145,7 @@
                 })
                 let input = self.SYLOGINFX
                 self.$http
-                    .post('/user/prelogin', input)
+                    .post('/eops/user/prelogin', input)
                     .then(
                         function (response) {
                             var pkgOut = response.data
@@ -160,7 +160,7 @@
                             input.pwdA = Base64.encode(pwdA)
                             input.pwdB = Base64.encode(pwdB)
                             self.$http
-                                .post('/user/login', input)
+                                .post('/eops/user/login', input)
                                 .then(
                                     function (responseEnd) {
                                         let pkgOutEnd = responseEnd.data
