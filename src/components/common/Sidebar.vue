@@ -105,10 +105,10 @@ export default {
     },
     computed: {
         onRoutes () {
-            let index = this.$route.path
-            let crumbs = this.getCrumbs(this.menus, index)
+            let url = this.$route.path
+            let crumbs = this.getCrumbs(this.menus, url)
             this.$emit('transferCrumb', crumbs)
-            return index
+            return url
         }
     },
     methods: {
