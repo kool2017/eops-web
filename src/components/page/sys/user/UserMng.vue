@@ -13,7 +13,7 @@
                             </el-col>
                             <el-col :span="3">
                                 <div class="label-input">
-                                    <el-input v-model="condition.userCid" size="small"> </el-input>
+                                    <el-input v-model="condition.userId" size="small"> </el-input>
                                 </div>
                             </el-col>
                             <el-col :span="2">
@@ -40,15 +40,11 @@
                     <hr class="split" />
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row @current-change="selectOne" height="386">
-                            <el-table-column prop="userCid" label="用户号" width="150" sortable></el-table-column>
+                            <el-table-column prop="userId" label="用户号" width="150" sortable></el-table-column>
                             <el-table-column prop="loginName" label="登录名" width="300"></el-table-column>
-                            <el-table-column prop="type_G" label="用户类型" width="150"></el-table-column>
-                            <el-table-column prop="hasKey_G" label="是否证书卡用户" width="150"></el-table-column>
-                            <el-table-column prop="keyUid" label="证书卡号" width="280"></el-table-column>
                             <el-table-column prop="phone" label="手机" width="150"></el-table-column>
                             <el-table-column prop="mail" label="邮箱" width="150"></el-table-column>
-                            <el-table-column prop="staffCid" label="员工编号" width="150"></el-table-column>
-                            <el-table-column prop="state_G" label="状态" width="100"></el-table-column>
+                            <el-table-column prop="state" label="状态" width="100"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-size="page.pageSize" :total="page.total" :page-count="page.pageCount" :current-page="page.currentPage" :page-sizes="[10, 50, 100]">
@@ -82,19 +78,8 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="10" :offset="1">
-                                <el-form-item label="用户类型:" prop="type">
-                                    <el-select v-model="addInfo.type" size="small" clearable>
-                                        <el-option label="AD-管理员" value="AD"></el-option>
-                                        <el-option label="SA-超级管理员" value="SA"></el-option>
-                                        <el-option label="UR-一般用户" value="UR"></el-option>
-                                        <el-option label="VR-游客" value="VR"></el-option>
-                                    </el-select>
-                                </el-form-item>
                                 <el-form-item label="邮箱:" prop="mail">
                                     <el-input v-model="addInfo.mail" size="small" maxlength="100"></el-input>
-                                </el-form-item>
-                                <el-form-item label="员工编号:" prop="staffCid">
-                                    <el-input v-model="addInfo.staffCid" size="small" maxlength="4"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -102,9 +87,6 @@
                 </el-card>
             </el-form>
             <div slot="footer">
-                <el-tooltip content="审批流功能测试，经办后生成用户管理交易，通过多级审批后新增用户" placement="bottom" effect="light">
-                    <el-button type="primary" size="small" icon="el-icon-check" @click="addOpr">经 办</el-button>
-                </el-tooltip>
                 <el-button type="primary" size="small" icon="el-icon-check" @click="add">确 定</el-button>
                 <el-button size="small" icon="el-icon-close" @click="addFormVisible = false">取 消</el-button>
             </div>
@@ -131,30 +113,10 @@
                                 <el-form-item label="手机:" prop="phone">
                                     <el-input v-model="updateInfo.phone" size="small" maxlength="20"></el-input>
                                 </el-form-item>
-                                <el-form-item label="是否证书卡用户:" prop="hasKey">
-                                    <el-select v-model="updateInfo.hasKey" size="small" clearable>
-                                        <el-option label="N-否" value="N"></el-option>
-                                        <el-option label="Y-是" value="Y"></el-option>
-                                    </el-select>
-                                </el-form-item>
                             </el-col>
                             <el-col :span="10" :offset="1">
-                                <el-form-item label="用户类型:" prop="type">
-                                    <el-select v-model="updateInfo.type" size="small" clearable>
-                                        <el-option label="AD-管理员" value="AD"></el-option>
-                                        <el-option label="SA-超级管理员" value="SA"></el-option>
-                                        <el-option label="UR-一般用户" value="UR"></el-option>
-                                        <el-option label="VR-游客" value="VR"></el-option>
-                                    </el-select>
-                                </el-form-item>
                                 <el-form-item label="邮箱:" prop="mail">
                                     <el-input v-model="updateInfo.mail" size="small" maxlength="100"></el-input>
-                                </el-form-item>
-                                <el-form-item label="证书卡号:" prop="keyUid">
-                                    <el-input v-model="updateInfo.keyUid" size="small" maxlength="36"></el-input>
-                                </el-form-item>
-                                <el-form-item label="员工编号:" prop="staffCid">
-                                    <el-input v-model="updateInfo.staffCid" size="small" maxlength="4"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -176,7 +138,7 @@
                         <el-row :gutter="10">
                             <el-col :span="10">
                                 <el-form-item label="用户号:">
-                                    <el-input v-model="viewInfo.userDtl.userCid" size="small" readonly></el-input>
+                                    <el-input v-model="viewInfo.userDtl.userId" size="small" readonly></el-input>
                                 </el-form-item>
                                 <el-form-item label="登录名:">
                                     <el-input v-model="viewInfo.userDtl.loginName" size="small" readonly></el-input>
@@ -188,28 +150,6 @@
                                     <el-input v-model="viewInfo.userDtl.mail" size="small" readonly></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="10" :offset="1">
-                                <el-form-item label="用户类型:">
-                                    <el-select v-model="viewInfo.userDtl.type" size="small" disabled>
-                                        <el-option label="AD-管理员" value="AD"></el-option>
-                                        <el-option label="SA-超级管理员" value="SA"></el-option>
-                                        <el-option label="UR-一般用户" value="UR"></el-option>
-                                        <el-option label="VR-游客" value="VR"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item label="是否证书卡用户:">
-                                    <el-select v-model="viewInfo.userDtl.hasKey" size="small" disabled>
-                                        <el-option label="Y-是" value="Y"></el-option>
-                                        <el-option label="N-否" value="N"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item label="证书卡号:">
-                                    <el-input v-model="viewInfo.userDtl.keyUid" size="small" readonly></el-input>
-                                </el-form-item>
-                                <el-form-item label="员工编号:">
-                                    <el-input v-model="viewInfo.userDtl.staffCid" size="small" readonly></el-input>
-                                </el-form-item>
-                            </el-col>
                         </el-row>
                     </div>
                     <span>
@@ -217,7 +157,7 @@
                     <hr class="split" />
                     <div class="card-context">
                         <el-table :data="viewInfo.loginLog" border style="width: 100%" ref="view-groupTable" height="200">
-                            <el-table-column prop="time_T" label="登录时间" width="200"></el-table-column>
+                            <el-table-column prop="time" label="登录时间" width="200"></el-table-column>
                             <!-- <el-table-column prop="ip" label="登录IP" width="250"></el-table-column> -->
                         </el-table>
                     </div>
@@ -225,17 +165,6 @@
             </el-form>
             <div slot="footer">
                 <el-button type="primary" size="small" icon="el-icon-check" @click="viewFormVisible = false">确 定</el-button>
-            </div>
-        </el-dialog>
-        <el-dialog title="用户授权" :visible.sync="authTransferVisible" :close-on-click-modal="false">
-            <el-card>
-                <el-transfer v-model="userAuth" :data="allAuth" :titles="['未授权','已授权']" :props="transferProps">
-
-                </el-transfer>
-            </el-card>
-            <div slot="footer">
-                <el-button type="primary" size="small" icon="el-icon-check" @click="authSubmit">确 定</el-button>
-                <el-button size="small" icon="el-icon-close" @click="authTransferVisible = false">取 消</el-button>
             </div>
         </el-dialog>
         <el-dialog title="设置角色" :visible.sync="roleTransferVisible" :close-on-click-modal="false">
@@ -256,7 +185,6 @@
                 <el-button type="primary" size="small" icon="el-icon-view" @click="view" :disabled="isDisabled">详情</el-button>
                 <el-button type="primary" size="small" icon="el-icon-k-freeze" @click="freeze" :disabled="isDisabled">冻结</el-button>
                 <el-button type="primary" size="small" icon="el-icon-k-unfreeze" @click="unfreeze" :disabled="isDisabled">解冻</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-management" @click="auth" :disabled="isDisabled">授权</el-button>
                 <el-button type="primary" size="small" icon="el-icon-k-role" @click="setRole" :disabled="isDisabled">角色</el-button>
                 <el-button type="danger" size="small" icon="el-icon-k-safe" @click="resetPwd" :disabled="isDisabled">重置密码</el-button>
             </el-col>
@@ -282,20 +210,11 @@ export default {
                     { required: true, message: '请输入登录名', trigger: 'blur' },
                     { max: 60, message: '最大长度60', trigger: 'blur' }
                 ],
-                type: [
-                    { required: true, message: '请输入用户类型', trigger: 'change' }
-                ],
                 phone: [
                     { max: 20, message: '最大长度20', trigger: 'blur' }
                 ],
                 mail: [
                     { max: 100, message: '最大长度100', trigger: 'blur' }
-                ],
-                keyUid: [
-                    { max: 36, message: '最大长度36', trigger: 'blur' }
-                ],
-                staffCid: [
-                    { max: 4, message: '最大长度4', trigger: 'blur' }
                 ],
                 face: [
                     { max: 100, message: '最大长度100', trigger: 'blur' }
@@ -304,20 +223,11 @@ export default {
             addFormVisible: false,
             updateInfo: {},
             updateRules: {
-                type: [
-                    { required: true, message: '请输入用户类型', trigger: 'change' }
-                ],
                 phone: [
                     { max: 20, message: '最大长度20', trigger: 'blur' }
                 ],
                 mail: [
                     { max: 100, message: '最大长度100', trigger: 'blur' }
-                ],
-                keyUid: [
-                    { max: 36, message: '最大长度36', trigger: 'blur' }
-                ],
-                staffCid: [
-                    { max: 4, message: '最大长度4', trigger: 'blur' }
                 ],
                 face: [
                     { max: 100, message: '最大长度100', trigger: 'blur' }
@@ -331,13 +241,6 @@ export default {
             viewFormVisible: false,
             isDisabled: true,
             labelPosition: 'left',
-            userAuth: [],
-            allAuth: [],
-            authTransferVisible: false,
-            transferProps: {
-                key: 'autCode',
-                label: 'name'
-            },
             userRole: [],
             allRole: [],
             roleTransferVisible: false,
