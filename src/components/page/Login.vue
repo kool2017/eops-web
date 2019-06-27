@@ -8,8 +8,8 @@
                 @tab-click="changeTab"
             >
                 <el-tab-pane name="login">
-          <span slot="label">
-            <i class="el-icon-date"></i> 登录</span>
+                    <span slot="label">
+                        <i class="el-icon-date"></i> 登录</span>
                     <el-form
                         :model="SYLOGINFX"
                         :rules="loginRules"
@@ -40,58 +40,8 @@
                         </div>
                     </el-form>
                 </el-tab-pane>
-                <!--<el-tab-pane name="register">-->
-                <!--<span slot="label">-->
-                <!--<i class="el-icon-date"></i> 注册</span>-->
-                <!--<el-form v-model="SYREGINFX">-->
-                <!--<el-form-item-->
-                <!--prop="suiLoginName"-->
-                <!--ref="regForm"-->
-                <!--&gt;-->
-                <!--<el-input-->
-                <!--v-model="SYREGINFX.suiLoginName"-->
-                <!--placeholder="请输入登录名"-->
-                <!--&gt;</el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item prop="suiPwd">-->
-                <!--<el-input-->
-                <!--type="password"-->
-                <!--v-model="SYREGINFX.suiPwd"-->
-                <!--placeholder="请输入密码"-->
-                <!--&gt;</el-input>-->
-                <!--</el-form-item>-->
-                <!--<el-form-item prop="suiPwdC">-->
-                <!--<el-input-->
-                <!--type="password"-->
-                <!--v-model="SYREGINFX.suiPwdC"-->
-                <!--placeholder="请确认密码"-->
-                <!--@keyup.enter.native="registerForm"-->
-                <!--&gt;</el-input>-->
-                <!--</el-form-item>-->
-                <!--<div class="login-btn">-->
-                <!--<el-button-->
-                <!--type="primary"-->
-                <!--@click="registerForm"-->
-                <!--&gt;注册</el-button>-->
-                <!--</div>-->
-                <!--</el-form>-->
-                <!--</el-tab-pane>-->
             </el-tabs>
         </div>
-        <!--<div class="login-bottom">-->
-        <!--<div style="width:300px;margin:0 auto; padding:20px 0;">-->
-        <!--<a-->
-        <!--target="_blank"-->
-        <!--href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010602009770"-->
-        <!--style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"-->
-        <!--&gt;<img-->
-        <!--src="../../../static/img/beian.png"-->
-        <!--style="float:left;"-->
-        <!--/>-->
-        <!--<p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">浙公网安备 33010602009770号</p>-->
-        <!--</a>-->
-        <!--</div>-->
-        <!--</div>-->
     </div>
 </template>
 
@@ -126,13 +76,12 @@
             }
         },
         created() {
-            this.appName = localStorage.getItem('appName')
-            // this.$notify({
-            //   title: '演示系统操作说明',
-            //   message: '登录用户kool密码kool,所有用户默认密码=用户名，ESC关闭消息',
-            //   duration: 0,
-            //   position: 'bottom-left'
-            // })
+            let self = this
+            self.appName = localStorage.getItem('appName')
+            //如果已经登录，跳转到Home
+            if(localStorage.getItem("token")){
+                self.$router.push('/home')
+            }
         },
         methods: {
             loginForm(formName) {
@@ -201,34 +150,6 @@
                         })
                     })
             },
-            // registerForm () {
-            //   const self = this
-            //   var input = {
-            //     SYREGINFX: [self.SYREGINFX]
-            //   }
-            //   input.SYREGINFX[0].suiPwd = Base64.encode(input.SYREGINFX[0].suiPwd)
-            //   input.SYREGINFX[0].suiPwdC = Base64.encode(input.SYREGINFX[0].suiPwdC)
-            //   self.$http.post('/sys/user/register', input)
-            //     .then(function (response) {
-            //       self.SYREGINFX = {
-            //         suiLoginName: '',
-            //         suiPwd: '',
-            //         suiPwdC: ''
-            //       }
-            //       self.$message({
-            //         message: '注册成功，请登录',
-            //         type: 'success'
-            //       })
-            //       self.paneName = 'login'
-            //     })
-            //     .catch(function (err) {
-            //       console.log(err)
-            //       self.$alert(err, '提示', {
-            //         confirmButtonText: '确定',
-            //         type: 'error'
-            //       })
-            //     })
-            // },
             changeTab() {
             }
         }
@@ -273,13 +194,4 @@
         height: 36px;
     }
 
-    /*.login-bottom {*/
-    /*width: 300px;*/
-    /*margin: 0 auto;*/
-    /*padding: 20px 0;*/
-    /*position: absolute;*/
-    /*bottom: 0px;*/
-    /*left: 50%;*/
-    /*margin-left: -150px;*/
-    /*}*/
 </style>

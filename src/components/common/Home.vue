@@ -26,6 +26,7 @@
     import uuid from 'uuid/v1'
 
     export default {
+        name: 'Home',
         data() {
             return {
                 crumbs: [],
