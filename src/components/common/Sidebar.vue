@@ -89,6 +89,7 @@
                                 node.deep = element.deep
                                 node.seq = element.seq
                                 node.url = element.url
+                                node.viewPath = element.viewPath
                                 node.icon = element.icon
                                 node.state = element.state
                                 //构造菜单树的子树
@@ -98,7 +99,13 @@
                         }
                     }
 
-                    // self.$router.addRoutes(self.createRoutes(menuArray))
+                    let routes =  [{
+                        path: '/home',
+                        component: resolve => require(['../../components/common/Home.vue'], resolve),
+                        children:self.createRoutes(menuArray)
+
+                    }]
+                    self.$router.addRoutes(routes)
                 })
                 .catch(function (err) {
                     console.log(err)
@@ -175,6 +182,7 @@
                             item.deep = element.deep
                             item.seq = element.seq
                             item.url = element.url
+                            item.viewPath = element.viewPath
                             item.icon = element.icon
                             item.state = element.state
                             item.subMenus = this.getSubMenus(item, menuArray)
@@ -195,7 +203,7 @@
                         if (menu.viewPath) {
                             let route = {
                                 path: menu.url,
-                                component: resolve => require(['../../components/page/' + menu.viewPath + '.vue'], resolve)
+                                component: resolve => require(['../../components/page' + menu.viewPath + '.vue'], resolve)
                             };
                             routes.push(route)
                         }

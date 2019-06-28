@@ -84,6 +84,7 @@ axios.interceptors.response.use(
             if (error.response.status == 404) {
                 msg = '无效的请求，请联系管理员！[' + error + ']'
             } else if (error.response.status == 401) {
+                localStorage.removeItem("token")
                 msg = '登录信息验证失败，请重新登录！[' + error + "]"
                 router.push('/')
             } else {

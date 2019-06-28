@@ -14,30 +14,6 @@ export default new Router({
             children: [{
                     path: '/',
                     component: resolve => require(['../components/page/Main.vue'], resolve)
-                },
-                // {
-                //     path: '/sys-user',
-                //     component: resolve => require(['../components/page/sys/user/UserMng.vue'], resolve)
-                // },
-                // {
-                //     path: '/sys-aut',
-                //     component: resolve => require(['../components/page/sys/aut/AutMng.vue'], resolve)
-                // },
-                // {
-                //     path: '/sys-menu',
-                //     component: resolve => require(['../components/page/sys/menu/MenuMng.vue'], resolve)
-                // },
-                // {
-                //     path: '/sys-role',
-                //     component: resolve => require(['../components/page/sys/role/RoleMng.vue'], resolve)
-                // },
-                // {
-                //     path: '/sys-param',
-                //     component: resolve => require(['../components/page/sys/param/ParamMng.vue'], resolve)
-                // },
-                {
-                    path: '/sys-counter',
-                    component: resolve => require(['../components/page/sys/counter/CounterMng.vue'], resolve)
                 }
             ]
         },

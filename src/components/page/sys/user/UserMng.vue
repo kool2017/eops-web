@@ -86,11 +86,7 @@
                             </el-col>
                             <el-col :span="10" :offset="1">
                                 <el-form-item label="邮箱:" prop="mail">
-<<<<<<< HEAD
-                                    <el-input v-model="addInfo.mail" size="small" maxlength="100"></el-input>
-=======
                                     <el-input v-model="addInfo.email" size="small" maxlength="100"></el-input>
->>>>>>> 5456defeb5a00ad7262147da65875d26147a8cbc
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -131,11 +127,7 @@
                             </el-col>
                             <el-col :span="10" :offset="1">
                                 <el-form-item label="邮箱:" prop="mail">
-<<<<<<< HEAD
-                                    <el-input v-model="updateInfo.mail" size="small" maxlength="100"></el-input>
-=======
                                     <el-input v-model="updateInfo.email" size="small" maxlength="100"></el-input>
->>>>>>> 5456defeb5a00ad7262147da65875d26147a8cbc
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -186,12 +178,7 @@
                 </el-card>
             </el-form>
             <div slot="footer">
-<<<<<<< HEAD
                 <el-button type="primary" size="small" icon="el-icon-check" @click="viewFormVisible = false">确 定</el-button>
-=======
-                <el-button type="primary" size="small" icon="el-icon-check" @click="viewFormVisible = false">确 定
-                </el-button>
->>>>>>> 5456defeb5a00ad7262147da65875d26147a8cbc
             </div>
         </el-dialog>
         <el-dialog title="设置角色" :visible.sync="roleTransferVisible" :close-on-click-modal="false">
