@@ -12,7 +12,39 @@ import './assets/icon/iconfont.css'
 import sha256 from 'sha256'
 import moment from 'moment'
 
-
+router.beforeEach((to, from, next) => {
+    if (localStorage.getItem('menus')) {
+        console.log(to.redirectedFrom)
+        if (getLastUrl(window.location.href,'/')==to.redirectedFrom && to.redirectedFrom!='/') {
+            var menus = JSON.parse(localStorage.getItem('menus'))
+            var rs = routes(menus)
+            router.addRoutes(rs)
+            router.replace(to.redirectedFrom)
+        }
+    }
+    next()
+})
+var getLastUrl=(str,yourStr)=>str.slice(str.lastIndexOf(yourStr))
+var routes = (menuArray)=>{
+    let routes = [{
+        path: '/home',
+        component: resolve => require(['@/components/common/Home.vue'], resolve),
+        children:[]
+    }]
+    if (menuArray) {
+        for (let index = 0; index < menuArray.length; index++) {
+            const menu = menuArray[index]
+            if (menu.viewPath) {
+                let route = {
+                    path: menu.url,
+                    component: resolve => require(['@/components/page' + menu.viewPath + '.vue'], resolve)
+                };
+                routes[0].children.push(route)
+            }
+        }
+    }
+    return routes
+}
 Vue.use(ElementUI)
 //全局系统名称
 localStorage.setItem('appName', '后台管理系统')
@@ -84,7 +116,7 @@ axios.interceptors.response.use(
             if (error.response.status == 404) {
                 msg = '无效的请求，请联系管理员！[' + error + ']'
             } else if (error.response.status == 401) {
-                localStorage.removeItem("token")
+                localStorage.clear()
                 msg = '登录信息验证失败，请重新登录！[' + error + "]"
                 router.push('/')
             } else {

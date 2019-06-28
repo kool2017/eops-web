@@ -81,7 +81,7 @@
                 self.$notify({
                     title: '通知',
                     message: self.data,
-                    duration: 0,
+                    duration: 3000,
                     position: 'bottom-right'
                 })
             },

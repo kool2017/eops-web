@@ -99,13 +99,9 @@
                         }
                     }
 
-                    let routes =  [{
-                        path: '/home',
-                        component: resolve => require(['../../components/common/Home.vue'], resolve),
-                        children:self.createRoutes(menuArray)
-
-                    }]
-                    self.$router.addRoutes(routes)
+                    //动态修改路由规则
+                    self.$router.addRoutes(self.createRoutes(menuArray))
+                    localStorage.setItem('menus',JSON.stringify(menuArray))
                 })
                 .catch(function (err) {
                     console.log(err)
@@ -125,8 +121,8 @@
             }
         },
         methods: {
-            getCrumbs(menus, index) {
-                let crumbs = []
+            getCrumbs(menus, url) {
+                let crumbs = [];
                 for (let i = 0; i < menus.length; i++) {
                     const menu = menus[i]
                     let flag = false
@@ -139,32 +135,33 @@
                                     if (itemGroup.items != undefined && itemGroup.items.length > 0) {
                                         for (let l = 0; l < itemGroup.items.length; l++) {
                                             const item = itemGroup.items[l]
-                                            if (item.url == index) {
+                                            if (item.url == url) {
                                                 crumbs = [item].concat(crumbs)
                                                 flag = true
                                                 break
                                             }
                                         }
                                     }
-                                    if (flag || itemGroup.url == index) {
+                                    if (flag || itemGroup.url == url) {
                                         crumbs = [itemGroup].concat(crumbs)
                                         flag = true
                                         break
                                     }
                                 }
                             }
-                            if (flag || subMenu.url == index) {
+                            if (flag || subMenu.url == url) {
                                 crumbs = [subMenu].concat(crumbs)
                                 flag = true
                                 break
                             }
                         }
                     }
-                    if (flag || menu.url == index) {
+                    if (flag || menu.url == url) {
                         crumbs = [menu].concat(crumbs)
                         break
                     }
                 }
+
                 return crumbs
             },
             getSubMenus(node, menuArray) {
@@ -196,16 +193,20 @@
                 return subArray
             },
             createRoutes(menuArray) {
-                let routes = []
+                let routes = [{
+                    path: '/home',
+                    component: resolve => require(['@/components/common/Home'], resolve),
+                    children:[]
+                }]
                 if (menuArray) {
                     for (let index = 0; index < menuArray.length; index++) {
                         const menu = menuArray[index]
                         if (menu.viewPath) {
                             let route = {
                                 path: menu.url,
-                                component: resolve => require(['../../components/page' + menu.viewPath + '.vue'], resolve)
+                                component: resolve => require(['@/components/page' + menu.viewPath + '.vue'], resolve)
                             };
-                            routes.push(route)
+                            routes[0].children.push(route)
                         }
                     }
                 }
