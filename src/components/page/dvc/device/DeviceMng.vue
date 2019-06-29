@@ -32,15 +32,15 @@
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="386">
-                            <el-table-column prop="id" label="序号" width="150"></el-table-column>
+                            <el-table-column prop="id" label="序号" width="80"></el-table-column>
                             <el-table-column prop="deviceName" label="设备名称" width="150"></el-table-column>
-                            <el-table-column prop="deviceType" label="设备类型" width="150"></el-table-column>
+                            <el-table-column prop="deviceType" label="设备类型" width="100"></el-table-column>
                             <el-table-column prop="location" label="位置" width="150"></el-table-column>
                             <el-table-column prop="startTime" label="开始使用时间" width="150"></el-table-column>
-                            <el-table-column prop="repairTimes" label="维修次数" width="150"></el-table-column>
-                            <el-table-column prop="state_str" label="状态" width="150"></el-table-column>
-                            <el-table-column prop="createdTime" label="创建时间" width="150"></el-table-column>
-                            <el-table-column prop="updatedTime" label="更新时间" width="150"></el-table-column>
+                            <el-table-column prop="repairTimes" label="维修次数" width="100"></el-table-column>
+                            <el-table-column prop="state_str" label="状态" width="80"></el-table-column>
+                            <el-table-column prop="createdTime" label="创建时间" width="160"></el-table-column>
+                            <el-table-column prop="updatedTime" label="更新时间" width="160"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -325,7 +325,7 @@
             },
             del() {
                 let self = this
-                self.$confirm('是否删除设备信息[' + self.selectedInfo.name + ']?', '提示', {
+                self.$confirm('是否删除设备信息[' + self.selectedInfo.deviceName + ']?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'info'

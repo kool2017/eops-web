@@ -168,7 +168,9 @@
                 self.$http
                     .post('/eops/user/logout', input)
                     .then(function (response) {
-                        localStorage.clear()
+                        localStorage.removeItem('userId')
+                        localStorage.removeItem('token')
+                        localStorage.removeItem('loginName')
                         self.$router.push('/login')
                     })
                     .catch((err) => {
