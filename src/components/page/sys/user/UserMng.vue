@@ -9,14 +9,6 @@
                     <div class="card-context">
                         <el-row :gutter="20">
                             <el-col :span="2">
-                                用户号:
-                            </el-col>
-                            <el-col :span="3">
-                                <div class="label-input">
-                                    <el-input v-model="condition.userId" size="small"></el-input>
-                                </div>
-                            </el-col>
-                            <el-col :span="2">
                                 登录名:
                             </el-col>
                             <el-col :span="3">
@@ -42,11 +34,13 @@
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="386">
-                            <el-table-column prop="userId" label="用户号" width="150" sortable></el-table-column>
+                            <el-table-column prop="id" label="用户号" width="150" sortable></el-table-column>
                             <el-table-column prop="loginName" label="登录名" width="300"></el-table-column>
+                            <el-table-column prop="userName" label="姓名" width="300"></el-table-column>
                             <el-table-column prop="phone" label="手机" width="150"></el-table-column>
                             <el-table-column prop="email" label="邮箱" width="150"></el-table-column>
-                            <el-table-column prop="state" label="状态" width="100"></el-table-column>
+                            <el-table-column prop="errorTimes" label="密码错误次数" width="150"></el-table-column>
+                            <el-table-column prop="state_str" label="状态" width="100"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -59,128 +53,10 @@
                 </el-card>
             </el-col>
         </el-row>
-        <el-dialog title="增加用户" :visible.sync="addFormVisible" :close-on-click-modal="false">
-            <el-form :model="addInfo" :rules="addRules" ref="addForm" :label-position="labelPosition"
-                     label-width="130px">
-                <el-card>
-                    <span>
-                        <i class="el-icon-edit"></i> 用户信息:</span>
-                    <hr class="split"/>
-                    <div class="card-context">
-                        <el-row :gutter="10">
-                            <el-col :span="10">
-                                <div class="avatar-uploader">
-                                    <el-upload :action="uploadAction" :show-file-list="false"
-                                               :on-success="addHandleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                                        <img v-if="addImageUrl" :src="addImageUrl" class="avatar">
-                                        <i v-else class="el-icon-k-face avatar-uploader-icon"></i>
-                                        <div slot="tip" class="el-upload__tip">修改头像</div>
-                                    </el-upload>
-                                </div>
-                                <el-form-item label="登录名:" prop="loginName">
-                                    <el-input v-model="addInfo.loginName" size="small" maxlength="60"></el-input>
-                                </el-form-item>
-                                <el-form-item label="手机:" prop="phone">
-                                    <el-input v-model="addInfo.phone" size="small" maxlength="20"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="10" :offset="1">
-                                <el-form-item label="邮箱:" prop="mail">
-                                    <el-input v-model="addInfo.email" size="small" maxlength="100"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-card>
-            </el-form>
-            <div slot="footer">
-                <el-button type="primary" size="small" icon="el-icon-check" @click="add">确 定</el-button>
-                <el-button size="small" icon="el-icon-close" @click="addFormVisible = false">取 消</el-button>
-            </div>
-        </el-dialog>
-        <el-dialog title="修改用户" :visible.sync="updateFormVisible" :close-on-click-modal="false">
-            <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" :label-position="labelPosition"
-                     label-width="120px">
-                <el-card>
-                    <span>
-                        <i class="el-icon-edit"></i> 用户信息:</span>
-                    <hr class="split"/>
-                    <div class="card-context">
-                        <el-row :gutter="10">
-                            <el-col :span="10">
-                                <div class="avatar-uploader">
-                                    <el-upload :action="uploadAction" :show-file-list="false"
-                                               :on-success="updateHandleAvatarSuccess"
-                                               :before-upload="beforeAvatarUpload">
-                                        <img v-if="updateImageUrl" :src="updateImageUrl" class="avatar">
-                                        <i v-else class="el-icon-k-face avatar-uploader-icon"></i>
-                                        <div slot="tip" class="el-upload__tip">修改头像</div>
-                                    </el-upload>
-                                </div>
-                                <el-form-item label="登录名:">
-                                    <el-input v-model="updateInfo.loginName" size="small" maxlength="60"
-                                              readonly></el-input>
-                                </el-form-item>
-                                <el-form-item label="手机:" prop="phone">
-                                    <el-input v-model="updateInfo.phone" size="small" maxlength="20"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="10" :offset="1">
-                                <el-form-item label="邮箱:" prop="mail">
-                                    <el-input v-model="updateInfo.email" size="small" maxlength="100"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-card>
-            </el-form>
-            <div slot="footer">
-                <el-button type="primary" size="small" icon="el-icon-check" @click="update">确 定</el-button>
-                <el-button size="small" icon="el-icon-close" @click="updateFormVisible = false">取 消</el-button>
-            </div>
-        </el-dialog>
-        <el-dialog title="用户详情" :visible.sync="viewFormVisible" :close-on-click-modal="true">
-            <el-form :model="viewInfo" ref="viewForm" :label-position="labelPosition" label-width="120px">
-                <el-card>
-                    <span>
-                        <i class="el-icon-view"></i> 用户信息:</span>
-                    <hr class="split"/>
-                    <div class="card-context">
-                        <el-row :gutter="10">
-                            <el-col :span="10">
-                                <el-form-item label="用户号:">
-                                    <el-input v-model="viewInfo.userDtl.userId" size="small" readonly></el-input>
-                                </el-form-item>
-                                <el-form-item label="登录名:">
-                                    <el-input v-model="viewInfo.userDtl.loginName" size="small" readonly></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="10" :offset="1">
-                                <el-form-item label="手机:">
-                                    <el-input v-model="viewInfo.userDtl.phone" size="small" readonly></el-input>
-                                </el-form-item>
-                                <el-form-item label="邮箱:">
-                                    <el-input v-model="viewInfo.userDtl.email" size="small" readonly></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                    </div>
-                    <span>
-                        <i class="el-icon-tickets"></i> 登录日志:</span>
-                    <hr class="split"/>
-                    <div class="card-context">
-                        <el-table :data="viewInfo.loginLog" border style="width: 100%" ref="view-groupTable"
-                                  height="200">
-                            <el-table-column prop="time" label="登录时间" width="200"></el-table-column>
-                            <!-- <el-table-column prop="ip" label="登录IP" width="250"></el-table-column> -->
-                        </el-table>
-                    </div>
-                </el-card>
-            </el-form>
-            <div slot="footer">
-                <el-button type="primary" size="small" icon="el-icon-check" @click="viewFormVisible = false">确 定</el-button>
-            </div>
-        </el-dialog>
+        <add-user :visible.sync="addFormVisible"></add-user>
+        <update-user ref="updateForm" :visible.sync="updateFormVisible" :selected-info="selectedInfo"></update-user>
+        <view-user :visible.sync="viewFormVisible" :init-info="viewInfo"></view-user>
+
         <el-dialog title="设置角色" :visible.sync="roleTransferVisible" :close-on-click-modal="false">
             <el-card>
                 <el-transfer v-model="userRole" :data="allRole" :titles="['可赋予角色','已赋予角色']" :props="roleTransferProps">
@@ -217,7 +93,12 @@
     </div>
 </template>
 <script>
+    import addUser from './Add'
+    import updateUser from './Edit'
+    import viewUser from './Detail'
+
     export default {
+        components: {addUser, updateUser, viewUser},
         data() {
             return {
                 condition: {},
@@ -289,17 +170,21 @@
             queryPage() {
                 let self = this
                 var input = {
-                    'loginName':self.condition.loginName,
-                    'currentPage':self.page.currentPage,
-                    'pageSize':self.page.pageSize
+                    'loginName': self.condition.loginName,
+                    'currentPage': self.page.currentPage,
+                    'pageSize': self.page.pageSize
                 }
                 self.$http
-                    .post('/user/get_user_page', input)
+                    .post('/eops/user/get_user_page', input)
                     .then((res) => {
                         var pkgOut = res.data
                         self.retList = pkgOut.data
                         self.page.total = pkgOut.total
                         self.page.pageCount = pkgOut.pageCount
+                        for (let index = 0; index < self.retList.length; index++) {
+                            let element = self.retList[index]
+                            element.state_str = self.stateStr(element.state)
+                        }
                     })
                     .catch((err) => {
                         console.log(err)
@@ -352,6 +237,7 @@
                         self.isDisabled = true
                         return
                     }
+                    self.$refs.updateForm.init(self.selectedInfo)
                     self.updateInfo = JSON.parse(JSON.stringify(self.selectedInfo))
                     if (self.updateInfo.face != null) {
                         self.updateImageUrl = self.updateInfo.face
@@ -452,8 +338,8 @@
                             }
                         }
                         self.viewInfo = {
-                            userDtl: pkgOut.pkgOut.data,
-                            loginLog: pkgOut.pkgOut.data.log
+                            userDtl: pkgOut.data,
+                            loginLog: pkgOut.data.log
                         }
                     })
                     .catch((err) => {
@@ -696,6 +582,17 @@
             updateHandleAvatarSuccess(res, file) {
                 this.updateInfo.face = res.fileUrl
                 this.updateImageUrl = URL.createObjectURL(file.raw)
+            },
+            stateStr(state) {
+                let stateStr = ''
+                if (state == 1) {
+                    stateStr = '正常'
+                } else if (state == 2) {
+                    stateStr = '关闭'
+                } else if (state == 3) {
+                    stateStr = '锁定'
+                }
+                return stateStr;
             }
         }
     }
