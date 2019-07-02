@@ -42,12 +42,6 @@
             visible: {
                 type: Boolean,
                 default: false
-            },
-            initInfo: {
-                userId: '',
-                loginName: '',
-                phone: '',
-                email: ''
             }
         },
         data() {
