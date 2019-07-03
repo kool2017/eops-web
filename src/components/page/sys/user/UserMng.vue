@@ -229,6 +229,7 @@
                     return
                 }
                 this.queryDtl(this.selectedInfo)
+                this.$refs.viewForm.init(self.viewInfo)
                 this.viewFormVisible = true
             },
             queryDtl(val) {
@@ -256,84 +257,6 @@
                             type: 'error'
                         })
                     })
-            },
-            freeze() {
-                let self = this
-                if (self.selectedInfo == null) {
-                    self.$alert('请选择一条记录', '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                    self.isDisabled = true
-                    return
-                }
-                self.$confirm('是否冻结用户[' + self.selectedInfo.loginName + ']?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'info'
-                }).then(() => {
-                    let input = {
-                        SYUSRCIDX: [self.selectedInfo]
-                    }
-                    self.$http
-                        .post('/sys/user/freezeUser', input)
-                        .then((res) => {
-                            let pkgOut = res.data
-                            self.$message({
-                                message: '用户[' + self.selectedInfo.loginName + ']冻结成功',
-                                type: 'success'
-                            })
-                            self.init()
-                            self.query()
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                            self.$alert(err, '提示', {
-                                confirmButtonText: '确定',
-                                type: 'error'
-                            })
-                        })
-                }).catch((erro) => {
-                })
-            },
-            unfreeze() {
-                let self = this
-                if (self.selectedInfo == null) {
-                    self.$alert('请选择一条记录', '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                    self.isDisabled = true
-                    return
-                }
-                self.$confirm('是否解冻用户[' + self.selectedInfo.loginName + ']?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'info'
-                }).then(() => {
-                    let input = {
-                        SYUSRCIDX: [self.selectedInfo]
-                    }
-                    self.$http
-                        .post('/sys/user/unfreezeUser', input)
-                        .then((res) => {
-                            let pkgOut = res.data
-                            self.$message({
-                                message: '用户[' + self.selectedInfo.loginName + ']解冻成功',
-                                type: 'success'
-                            })
-                            self.init()
-                            self.query()
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                            self.$alert(err, '提示', {
-                                confirmButtonText: '确定',
-                                type: 'error'
-                            })
-                        })
-                }).catch((erro) => {
-                })
             },
             setRole() {
                 if (this.selectedInfo == null) {
