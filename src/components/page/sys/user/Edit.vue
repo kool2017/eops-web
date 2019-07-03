@@ -49,15 +49,13 @@
             visible: {
                 type: Boolean,
                 default: false
-            }
+            },
+            selectedInfo:{}
         },
         data() {
             return {
                 updateInfo: {},
                 updateRules: {
-                    type: [
-                        {required: true, message: '请输入用户类型', trigger: 'change'}
-                    ],
                     phone: [
                         {max: 20, message: '最大长度20', trigger: 'blur'}
                     ],
@@ -69,14 +67,18 @@
                     ],
                 },
                 labelPosition: 'left',
-                uploadAction: this.$http.defaults.baseURL + '/user/uploadFace',
+                uploadAction: this.$http.defaults.baseURL + '/eops/user/uploadFace',
                 updateImageUrl: ''
             }
         },
+        watch:{
+            visible:(newVal)=>{
+                if (newVal) {
+                    this.updateInfo = JSON.parse(JSON.stringify(this.selectedInfo))
+                }
+            }
+        },
         methods: {
-            init(selectedInfo) {
-                this.updateInfo = JSON.parse(JSON.stringify(selectedInfo))
-            },
             update() {
                 let self = this
                 let validRet = false
@@ -90,9 +92,7 @@
                 self.$http
                     .post('/eops/user/updateUser', input)
                     .then((res) => {
-                        let pkgOut = res.data
-                        self.init()
-                        self.query()
+                        self.afterUpdate()
                         self.$message({
                             message: '修改信息成功',
                             type: 'success'
@@ -105,6 +105,12 @@
                             type: 'error'
                         })
                     })
+            },
+            modalClose() {
+                let afterUpdateInfo = JOSN.parse(JSON.stringify(this.updateInfo))
+                this.$emit('afterUpdate', afterUpdateInfo)
+                this.updateInfo = {}
+                this.$emit('update:visible', false)
             },
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg'
@@ -121,9 +127,6 @@
             updateHandleAvatarSuccess(res, file) {
                 this.updateInfo.face = res.fileUrl
                 this.updateImageUrl = URL.createObjectURL(file.raw)
-            },
-            modalClose() {
-                this.$emit('update:visible', false);
             }
         }
     }

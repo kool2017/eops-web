@@ -1,6 +1,6 @@
 <template>
     <el-dialog title="用户详情" :visible.sync="visible" :close-on-click-modal="true" :before-close="modalClose">
-        <el-form :model="viewInfo" ref="viewForm" :label-position="labelPosition" label-width="120px">
+        <el-form :model="detailInfo" ref="viewForm" :label-position="labelPosition" label-width="120px">
             <el-card>
                     <span>
                         <i class="el-icon-view"></i> 用户信息:</span>
@@ -9,18 +9,18 @@
                     <el-row :gutter="10">
                         <el-col :span="10">
                             <el-form-item label="用户号:">
-                                <el-input v-model="viewInfo.userId" size="small" readonly></el-input>
+                                <el-input v-model="detailInfo.userId" size="small" readonly></el-input>
                             </el-form-item>
                             <el-form-item label="登录名:">
-                                <el-input v-model="viewInfo.loginName" size="small" readonly></el-input>
+                                <el-input v-model="detailInfo.loginName" size="small" readonly></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="10" :offset="1">
                             <el-form-item label="手机:">
-                                <el-input v-model="viewInfo.phone" size="small" readonly></el-input>
+                                <el-input v-model="detailInfo.phone" size="small" readonly></el-input>
                             </el-form-item>
                             <el-form-item label="邮箱:">
-                                <el-input v-model="viewInfo.email" size="small" readonly></el-input>
+                                <el-input v-model="detailInfo.email" size="small" readonly></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -43,7 +43,7 @@
                 type: Boolean,
                 default: false
             },
-            initInfo: {
+            selectedInfo: {
                 userId: '',
                 loginName: '',
                 phone: '',
@@ -52,7 +52,7 @@
         },
         data() {
             return {
-                viewInfo: {
+                detailInfo: {
                     userId: '',
                     loginName: '',
                     phone: '',
@@ -61,8 +61,14 @@
                 labelPosition: 'left'
             }
         },
+        watch:{
+            visible:(newVal)=>{
+                if (newVal) {
+                    this.detailInfo = JSON.parse(JSON.stringify(this.selectedInfo))
+                }
+            }
+        },
         methods: {
-
             modalClose() {
                 this.$emit('update:visible', false);
             }

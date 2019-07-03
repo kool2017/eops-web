@@ -53,52 +53,40 @@
                 </el-card>
             </el-col>
         </el-row>
-        <add-user :visible.sync="addFormVisible"></add-user>
-        <update-user ref="updateForm" :visible.sync="updateFormVisible" :selected-info="selectedInfo"></update-user>
-        <view-user :visible.sync="viewFormVisible" :init-info="viewInfo"></view-user>
-
-        <el-dialog title="设置角色" :visible.sync="roleTransferVisible" :close-on-click-modal="false">
-            <el-card>
-                <el-transfer v-model="userRole" :data="allRole" :titles="['可赋予角色','已赋予角色']" :props="roleTransferProps">
-
-                </el-transfer>
-            </el-card>
-            <div slot="footer">
-                <el-button type="primary" size="small" icon="el-icon-check" @click="roleSubmit">确 定</el-button>
-                <el-button size="small" icon="el-icon-close" @click="roleTransferVisible = false">取 消</el-button>
-            </div>
-        </el-dialog>
         <el-row class="cmd">
             <el-col>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('ADD')">增加</el-button>
-                <el-button type="primary" size="small" icon="el-icon-edit" @click="editForm('UPDATE')"
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showAdd">增加</el-button>
+                <el-button type="primary" size="small" icon="el-icon-edit" @click="showUpdate"
                            :disabled="isDisabled">修改
                 </el-button>
-                <el-button type="primary" size="small" icon="el-icon-view" @click="view" :disabled="isDisabled">详情
+                <el-button type="primary" size="small" icon="el-icon-view" @click="showDetail"
+                           :disabled="isDisabled">详情
                 </el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-freeze" @click="freeze" :disabled="isDisabled">
-                    冻结
-                </el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-unfreeze" @click="unfreeze"
-                           :disabled="isDisabled">解冻
-                </el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-role" @click="setRole" :disabled="isDisabled">
+                <el-button type="primary" size="small" icon="el-icon-k-role" @click="showSetRole"
+                           :disabled="isDisabled">
                     角色
                 </el-button>
-                <el-button type="danger" size="small" icon="el-icon-k-safe" @click="resetPwd" :disabled="isDisabled">
+                <el-button type="danger" size="small" icon="el-icon-k-safe" @click="resetPwd"
+                           :disabled="isDisabled">
                     重置密码
                 </el-button>
             </el-col>
         </el-row>
+        <add-user :visible.sync="addFormVisible"></add-user>
+        <update-user :visible.sync="editFormVisible" :selected-info="selectedInfo" @afterUpdate="refresh"
+                     ref="editForm"></update-user>
+        <view-user :visible.sync="detailFormVisible" :selected-info="selectedInfo"></view-user>
+        <set-role :visible.sync="roleTransferVisible"></set-role>
     </div>
 </template>
 <script>
     import addUser from './Add'
     import updateUser from './Edit'
     import viewUser from './Detail'
+    import setRole from './SetRole'
 
     export default {
-        components: {addUser, updateUser, viewUser},
+        components: {addUser, updateUser, viewUser, setRole},
         data() {
             return {
                 condition: {},
@@ -110,56 +98,11 @@
                     currentPage: 1
                 },
                 selectedInfo: {},
-                addInfo: {},
-                addRules: {
-                    loginName: [
-                        {required: true, message: '请输入登录名', trigger: 'blur'},
-                        {max: 60, message: '最大长度60', trigger: 'blur'}
-                    ],
-                    phone: [
-                        {max: 20, message: '最大长度20', trigger: 'blur'}
-                    ],
-                    email: [
-                        {max: 100, message: '最大长度100', trigger: 'blur'}
-                    ],
-                    face: [
-                        {max: 100, message: '最大长度100', trigger: 'blur'}
-                    ],
-                },
                 addFormVisible: false,
-                updateInfo: {},
-                updateRules: {
-                    type: [
-                        {required: true, message: '请输入用户类型', trigger: 'change'}
-                    ],
-                    phone: [
-                        {max: 20, message: '最大长度20', trigger: 'blur'}
-                    ],
-                    email: [
-                        {max: 100, message: '最大长度100', trigger: 'blur'}
-                    ],
-                    face: [
-                        {max: 100, message: '最大长度100', trigger: 'blur'}
-                    ],
-                },
-                updateFormVisible: false,
-                viewInfo: {
-                    userDtl: {},
-                    loginLog: []
-                },
-                viewFormVisible: false,
-                isDisabled: true,
-                labelPosition: 'left',
-                userRole: [],
-                allRole: [],
+                editFormVisible: false,
+                detailFormVisible: false,
                 roleTransferVisible: false,
-                roleTransferProps: {
-                    key: 'roleCode',
-                    label: 'name'
-                },
-                uploadAction: this.$http.defaults.baseURL + '/user/uploadFace',
-                addImageUrl: '',
-                updateImageUrl: ''
+                isDisabled: true
             }
         },
         created() {
@@ -167,6 +110,23 @@
             this.query()
         },
         methods: {
+            init() {
+                this.selectedInfo = {}
+                this.addFormVisible = false
+                this.editFormVisible = false
+                this.detailFormVisible = false
+                this.roleTransferVisible = false
+                this.isDisabled = true
+            },
+            query() {
+                this.page = {
+                    pageSize: 10,
+                    total: 0,
+                    pageCount: 0,
+                    currentPage: 1
+                }
+                this.queryPage();
+            },
             queryPage() {
                 let self = this
                 var input = {
@@ -194,15 +154,6 @@
                         })
                     })
             },
-            query() {
-                this.page = {
-                    pageSize: 10,
-                    total: 0,
-                    pageCount: 0,
-                    currentPage: 1
-                }
-                this.queryPage();
-            },
             handleSizeChange(pageSize) {
                 let self = this
                 self.page.pageSize = pageSize
@@ -222,11 +173,31 @@
                     this.isDisabled = false
                 }
             },
+            showAdd() {
+                this.addFormVisible = true
+            },
+            showUpdate() {
+                let self = this
+                if (self.selectedInfo == null) {
+                    self.$alert('请选择一条记录', '提示', {
+                        confirmButtonText: '确定',
+                        type: 'error'
+                    })
+                    self.isDisabled = true
+                    return
+                }
+                self.editFormVisible = true
+            },
+            showDetail() {
+            },
+            showSetRole() {
+            },
+            refresh(updateInfo) {
+                this.selectOne = updateInfo
+            },
             editForm(formType) {
                 let self = this
                 if (formType === 'ADD') {
-                    self.addInfo = {}
-                    self.addImageUrl = ''
                     self.addFormVisible = true
                 } else if (formType === 'UPDATE') {
                     if (self.selectedInfo == null) {
@@ -238,12 +209,6 @@
                         return
                     }
                     self.$refs.updateForm.init(self.selectedInfo)
-                    self.updateInfo = JSON.parse(JSON.stringify(self.selectedInfo))
-                    if (self.updateInfo.face != null) {
-                        self.updateImageUrl = self.updateInfo.face
-                    } else {
-                        self.updateImageUrl = null
-                    }
                     self.updateFormVisible = true
                 } else {
                     console.log('表单类型错误')
@@ -253,64 +218,6 @@
                     })
                     return
                 }
-            },
-            add() {
-                let self = this
-                let validRet = false
-                self.$refs['addForm'].validate((valid) => {
-                    validRet = valid
-                })
-                if (validRet == false) {
-                    return
-                }
-                let input = self.addInfo
-                self.$http
-                    .post('/user/addUser', input)
-                    .then((res) => {
-                        let pkgOut = res.data
-                        self.init()
-                        self.query()
-                        self.$message({
-                            message: '增加信息成功',
-                            type: 'success'
-                        })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
-            },
-            update() {
-                let self = this
-                let validRet = false
-                self.$refs['updateForm'].validate((valid) => {
-                    validRet = valid
-                })
-                if (validRet == false) {
-                    return
-                }
-                let input = self.updateInfo
-                self.$http
-                    .post('/user/updateUser', input)
-                    .then((res) => {
-                        let pkgOut = res.data
-                        self.init()
-                        self.query()
-                        self.$message({
-                            message: '修改信息成功',
-                            type: 'success'
-                        })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
             },
             view() {
                 if (this.selectedInfo == null) {
@@ -482,38 +389,6 @@
                         })
                     })
             },
-            roleSubmit() {
-                const self = this
-                let secIn = []
-                for (let index = 0; index < self.userRole.length; index++) {
-                    const element = self.userRole[index];
-                    let propIn = {
-                        userCid: self.selectedInfo.userCid,
-                        roleCode: element
-                    }
-                    secIn.push(propIn)
-                }
-                let input = {
-                    SYUSRCIDX: [self.selectedInfo],
-                    SYUSRROLEX: secIn
-                }
-                self.$http
-                    .post('/sys/user/setRole', input)
-                    .then((res) => {
-                        this.roleTransferVisible = false
-                        self.$message({
-                            message: '授权成功',
-                            type: 'success'
-                        })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
-            },
             resetPwd() {
                 let self = this
                 if (self.selectedInfo == null) {
@@ -529,11 +404,9 @@
                     cancelButtonText: '取消',
                     type: 'info'
                 }).then(() => {
-                    let input = {
-                        SYUSRCIDX: [self.selectedInfo]
-                    }
+                    let input = self.selectedInfo
                     self.$http
-                        .post('/sys/user/resetPwd', input)
+                        .post('/eops/user/resetPwd', input)
                         .then((res) => {
                             let pkgOut = res.data
                             self.$message({
@@ -553,76 +426,9 @@
                 }).catch((erro) => {
                 })
 
-            },
-            init() {
-                this.addInfo = {}
-                this.updateInfo = {}
-                this.selectedInfo = {}
-                this.isDisabled = true
-                this.addFormVisible = false
-                this.updateFormVisible = false
-                this.viewFormVisible = false
-            },
-            addHandleAvatarSuccess(res, file) {
-                this.addInfo.face = res.fileUrl
-                this.addImageUrl = URL.createObjectURL(file.raw)
-            },
-            beforeAvatarUpload(file) {
-                const isJPG = file.type === 'image/jpeg'
-                const isLt2M = file.size / 1024 / 1024 < 2
-
-                if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
-                }
-                return isJPG && isLt2M
-            },
-            updateHandleAvatarSuccess(res, file) {
-                this.updateInfo.face = res.fileUrl
-                this.updateImageUrl = URL.createObjectURL(file.raw)
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '关闭'
-                } else if (state == 3) {
-                    stateStr = '锁定'
-                }
-                return stateStr;
             }
         }
     }
 </script>
 <style scoped>
-    .avatar-uploader {
-        border: 1px dashed #d9d9d9;
-        border-radius: 10px;
-        width: 60px;
-        height: 60px;
-        margin-top: 5px;
-        margin-bottom: 60px;
-    }
-
-    .avatar-uploader:hover {
-        border-color: #409eff;
-    }
-
-    .avatar-uploader-icon {
-        font-size: 28px;
-        color: #8c939d;
-        width: 60px;
-        height: 60px;
-        line-height: 60px;
-        text-align: center;
-    }
-
-    .avatar {
-        width: 60px;
-        height: 60px;
-        display: block;
-    }
 </style>

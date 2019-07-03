@@ -40,7 +40,7 @@ module.exports = {
                 changeOrigin: true
             },
             '/cdn': {
-                target: 'http://localhost:10101',
+                target: 'http://localhost:10100',
                 changeOrigin: true
             }
         },
