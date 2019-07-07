@@ -16,16 +16,16 @@ router.beforeEach((to, from, next) => {
     if (localStorage.getItem('menus')) {
         console.log(to.redirectedFrom)
         if (getLastUrl(window.location.href,'/')==to.redirectedFrom && to.redirectedFrom!='/') {
-            var menus = JSON.parse(localStorage.getItem('menus'))
-            var rs = routes(menus)
+            let menus = JSON.parse(localStorage.getItem('menus'))
+            let rs = routes(menus)
             router.addRoutes(rs)
             router.replace(to.redirectedFrom)
         }
     }
     next()
 })
-var getLastUrl=(str,yourStr)=>str.slice(str.lastIndexOf(yourStr))
-var routes = (menuArray)=>{
+let getLastUrl=(str,yourStr)=>str.slice(str.lastIndexOf(yourStr))
+let routes = (menuArray)=>{
     let routes = [{
         path: '/home',
         component: resolve => require(['@/components/common/Home.vue'], resolve),
@@ -100,9 +100,9 @@ axios.interceptors.request.use(
 //响应拦截
 axios.interceptors.response.use(
     function (response) {
-        var pkgOut = response.data
-        var code = pkgOut.code
-        var errorMsg = pkgOut.msg
+        let pkgOut = response.data
+        let code = pkgOut.code
+        let errorMsg = pkgOut.msg
         if (code != 0) {
             console.log(errorMsg)
             return Promise.reject(errorMsg)

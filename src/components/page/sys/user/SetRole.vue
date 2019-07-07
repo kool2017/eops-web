@@ -64,7 +64,7 @@
                             type: 'error'
                         })
                     })
-            }
+            },
 
             modalClose() {
                 this.$emit('update:visible', false);
