@@ -129,7 +129,7 @@
             },
             queryPage() {
                 let self = this
-                var input = {
+                let input = {
                     'loginName': self.condition.loginName,
                     'currentPage': self.page.currentPage,
                     'pageSize': self.page.pageSize
@@ -137,7 +137,7 @@
                 self.$http
                     .post('/eops/user/get_user_page', input)
                     .then((res) => {
-                        var pkgOut = res.data
+                        let pkgOut = res.data
                         self.retList = pkgOut.data
                         self.page.total = pkgOut.total
                         self.page.pageCount = pkgOut.pageCount
