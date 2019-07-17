@@ -192,45 +192,8 @@
             },
             showSetRole() {
             },
-            refresh(updateInfo) {
-                this.selectOne = updateInfo
-            },
-            editForm(formType) {
-                let self = this
-                if (formType === 'ADD') {
-                    self.addFormVisible = true
-                } else if (formType === 'UPDATE') {
-                    if (self.selectedInfo == null) {
-                        self.$alert('请选择一条记录', '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                        self.isDisabled = true
-                        return
-                    }
-                    self.$refs.updateForm.init(self.selectedInfo)
-                    self.updateFormVisible = true
-                } else {
-                    console.log('表单类型错误')
-                    self.$alert('表单类型错误', '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                    return
-                }
-            },
-            view() {
-                if (this.selectedInfo == null) {
-                    this.$alert('请选择一条记录', '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                    this.isDisabled = true
-                    return
-                }
-                this.queryDtl(this.selectedInfo)
-                this.$refs.viewForm.init(self.viewInfo)
-                this.viewFormVisible = true
+            refresh() {
+                this.query()
             },
             queryDtl(val) {
                 let self = this
@@ -349,6 +312,17 @@
                 }).catch((erro) => {
                 })
 
+            },
+            stateStr(state) {
+                let stateStr = ''
+                if (state == 1) {
+                    stateStr = '正常'
+                } else if (state == 2) {
+                    stateStr = '关闭'
+                } else if (state == 3) {
+                    stateStr = '锁定'
+                }
+                return stateStr;
             }
         }
     }

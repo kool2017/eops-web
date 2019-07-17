@@ -14,7 +14,6 @@ import moment from 'moment'
 
 router.beforeEach((to, from, next) => {
     if (localStorage.getItem('menus')) {
-        console.log(to.redirectedFrom)
         if (getLastUrl(window.location.href,'/')==to.redirectedFrom && to.redirectedFrom!='/') {
             var menus = JSON.parse(localStorage.getItem('menus'))
             var rs = routes(menus)
@@ -82,15 +81,6 @@ axios.interceptors.request.use(
         if (signature) {
             config.headers.signature = signature
         }
-        // config.headers = {
-        //     'client': client,
-        //     'req_id': reqId,
-        //     'req_time': time,
-        //     'x_token': token,
-        //     'user_id': userId,
-        //     'login_name': loginName,
-        //     'signature': signature
-        // }
         return config
     },
     function (error) {

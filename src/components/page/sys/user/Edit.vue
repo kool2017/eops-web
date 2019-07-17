@@ -1,6 +1,6 @@
 <template>
     <el-dialog title="修改用户" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
-        <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" :label-position="labelPosition"
+        <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" label-position="left"
                  label-width="120px">
             <el-card>
                     <span>

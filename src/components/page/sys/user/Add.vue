@@ -1,6 +1,6 @@
 <template>
     <el-dialog title="增加用户" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
-        <el-form :model="addInfo" :rules="addRules" ref="addForm" :label-position="labelPosition"
+        <el-form :model="addInfo" :rules="addRules" ref="addForm" label-position="left"
                  label-width="130px">
             <el-card>
                     <span>
@@ -68,8 +68,7 @@
                     ],
                 },
                 addImageUrl: '',
-                labelPosition: 'left',
-                uploadAction: this.$http.defaults.baseURL + '/user/uploadFace'
+                uploadAction: this.$http.defaults.baseURL + '/eops/user/uploadFace'
             }
         },
         methods: {
@@ -88,7 +87,7 @@
                     .then((res) => {
                         let pkgOut = res.data
                         self.addInfo = {}
-                        self.visible = false
+                        self.modalClose()
                         self.$message({
                             message: '增加信息成功',
                             type: 'success'
@@ -123,6 +122,8 @@
                 this.updateImageUrl = URL.createObjectURL(file.raw)
             },
             modalClose() {
+                this.addInfo = {}
+                this.addImageUrl = ''
                 this.$emit('update:visible', false);
             }
         }
