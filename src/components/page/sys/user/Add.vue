@@ -12,7 +12,7 @@
                             <div class="avatar-uploader">
                                 <el-upload :action="uploadAction" :show-file-list="false"
                                            :on-success="addHandleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                                    <img v-if="addImageUrl" :src="addImageUrl" class="avatar">
+                                    <img v-if="addInfo.avatar" :src="addInfo.avatar" class="avatar">
                                     <i v-else class="el-icon-k-face avatar-uploader-icon"></i>
                                     <div slot="tip" class="el-upload__tip">修改头像</div>
                                 </el-upload>
@@ -27,6 +27,9 @@
                         <el-col :span="10" :offset="1">
                             <el-form-item label="邮箱:" prop="mail">
                                 <el-input v-model="addInfo.email" size="small" maxlength="100"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名:" prop="userName">
+                                <el-input v-model="addInfo.userName" size="small" maxlength="100"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -51,7 +54,13 @@
         },
         data() {
             return {
-                addInfo: {},
+                addInfo: {
+                    avatar:'',
+                    loginName:'',
+                    phone:'',
+                    email:'',
+                    userName:''
+                },
                 addRules: {
                     loginName: [
                         {required: true, message: '请输入登录名', trigger: 'blur'},
@@ -63,11 +72,10 @@
                     email: [
                         {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
-                    face: [
+                    avatar: [
                         {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
                 },
-                addImageUrl: '',
                 uploadAction: this.$http.defaults.baseURL + '/eops/user/uploadFace'
             }
         },
@@ -102,8 +110,7 @@
                     })
             },
             addHandleAvatarSuccess(res, file) {
-                this.addInfo.face = res.fileUrl
-                this.addImageUrl = URL.createObjectURL(file.raw)
+                this.addInfo.avatar = res.fileUrl
             },
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg'
@@ -117,13 +124,11 @@
                 }
                 return isJPG && isLt2M
             },
-            updateHandleAvatarSuccess(res, file) {
-                this.updateInfo.face = res.fileUrl
-                this.updateImageUrl = URL.createObjectURL(file.raw)
-            },
             modalClose() {
+                let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))
+                this.$emit('afterClose', afterAddInfo)
                 this.addInfo = {}
-                this.addImageUrl = ''
+                // this.addImageUrl = ''
                 this.$emit('update:visible', false);
             }
         }

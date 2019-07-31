@@ -38,10 +38,6 @@ module.exports = {
             '/eops': {
                 target: 'http://localhost:10101',
                 changeOrigin: true
-            },
-            '/cdn': {
-                target: 'http://localhost:10100',
-                changeOrigin: true
             }
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"

@@ -33,7 +33,7 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @current-change="selectOne" height="386">
+                                  @row-click="selectOne" height="400">
                             <el-table-column prop="id" label="用户号" width="150" sortable></el-table-column>
                             <el-table-column prop="loginName" label="登录名" width="300"></el-table-column>
                             <el-table-column prop="userName" label="姓名" width="300"></el-table-column>
@@ -72,10 +72,10 @@
                 </el-button>
             </el-col>
         </el-row>
-        <add-user :visible.sync="addFormVisible"></add-user>
-        <update-user :visible.sync="editFormVisible" :selected-info="selectedInfo" @afterUpdate="refresh"
+        <add-user :visible.sync="addFormVisible" @afterClose="refresh"></add-user>
+        <update-user :visible.sync="updateFormVisible" :update-info="updateInitInfo" @afterClose="refresh"
                      ref="editForm"></update-user>
-        <view-user :visible.sync="detailFormVisible" :selected-info="selectedInfo"></view-user>
+        <view-user :visible.sync="viewFormVisible" :view-info="viewInitInfo"></view-user>
         <set-role :visible.sync="roleTransferVisible"></set-role>
     </div>
 </template>
@@ -98,9 +98,11 @@
                     currentPage: 1
                 },
                 selectedInfo: {},
+                updateInitInfo: {},
+                viewInitInfo: {},
                 addFormVisible: false,
-                editFormVisible: false,
-                detailFormVisible: false,
+                updateFormVisible: false,
+                viewFormVisible: false,
                 roleTransferVisible: false,
                 isDisabled: true
             }
@@ -113,8 +115,8 @@
             init() {
                 this.selectedInfo = {}
                 this.addFormVisible = false
-                this.editFormVisible = false
-                this.detailFormVisible = false
+                this.updateFormVisible = false
+                this.viewFormVisible = false
                 this.roleTransferVisible = false
                 this.isDisabled = true
             },
@@ -165,9 +167,9 @@
                 self.page.currentPage = currentPage
                 self.queryPage()
             },
-            selectOne(val) {
-                this.selectedInfo = val
-                if (val == null) {
+            selectOne(row, column, event) {
+                this.selectedInfo = row
+                if (row == null) {
                     this.isDisabled = true
                 } else {
                     this.isDisabled = false
@@ -186,40 +188,26 @@
                     self.isDisabled = true
                     return
                 }
-                self.editFormVisible = true
+                self.updateInitInfo = Object.assign({}, self.selectedInfo)
+                self.updateFormVisible = true
             },
             showDetail() {
+                let self = this
+                if (self.selectedInfo == null) {
+                    self.$alert('请选择一条记录', '提示', {
+                        confirmButtonText: '确定',
+                        type: 'error'
+                    })
+                    self.isDisabled = true
+                    return
+                }
+                self.viewInitInfo = Object.assign({}, self.selectedInfo)
+                self.viewFormVisible = true
             },
             showSetRole() {
             },
             refresh() {
                 this.query()
-            },
-            queryDtl(val) {
-                let self = this
-                let input = val
-                self.$http
-                    .post('/user/queryUserDetail', input)
-                    .then((res) => {
-                        let pkgOut = res.data
-                        for (let index = 0; index < pkgOut.data.log.length; index++) {
-                            const element = pkgOut.data.log[index];
-                            if (element.time != null) {
-                                element.time = self.$moment(Number(element.time)).format('YYYY-MM-DD HH:mm:ss')
-                            }
-                        }
-                        self.viewInfo = {
-                            userDtl: pkgOut.data,
-                            loginLog: pkgOut.data.log
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
             },
             setRole() {
                 if (this.selectedInfo == null) {

@@ -13,7 +13,7 @@
                                 <el-upload :action="uploadAction" :show-file-list="false"
                                            :on-success="updateHandleAvatarSuccess"
                                            :before-upload="beforeAvatarUpload">
-                                    <img v-if="updateImageUrl" :src="updateImageUrl" class="avatar">
+                                    <img v-if="updateInfo.avatar" :src="updateInfo.avatar" class="avatar">
                                     <i v-else class="el-icon-k-face avatar-uploader-icon"></i>
                                     <div slot="tip" class="el-upload__tip">修改头像</div>
                                 </el-upload>
@@ -29,6 +29,9 @@
                         <el-col :span="10" :offset="1">
                             <el-form-item label="邮箱:" prop="mail">
                                 <el-input v-model="updateInfo.email" size="small" maxlength="100"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名:" prop="userName">
+                                <el-input v-model="updateInfo.userName" size="small" maxlength="100"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -50,11 +53,10 @@
                 type: Boolean,
                 default: false
             },
-            selectedInfo:{}
+            updateInfo: {}
         },
         data() {
             return {
-                updateInfo: {},
                 updateRules: {
                     phone: [
                         {max: 20, message: '最大长度20', trigger: 'blur'}
@@ -62,20 +64,11 @@
                     email: [
                         {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
-                    face: [
+                    avatar: [
                         {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
                 },
-                labelPosition: 'left',
-                uploadAction: this.$http.defaults.baseURL + '/eops/user/uploadFace',
-                updateImageUrl: ''
-            }
-        },
-        watch:{
-            visible:(newVal)=>{
-                if (newVal) {
-                    this.updateInfo = JSON.parse(JSON.stringify(this.selectedInfo))
-                }
+                uploadAction: this.$http.defaults.baseURL + '/eops/user/uploadFace'
             }
         },
         methods: {
@@ -90,9 +83,9 @@
                 }
                 let input = self.updateInfo
                 self.$http
-                    .post('/eops/user/updateUser', input)
+                    .post('/eops/user/modify', input)
                     .then((res) => {
-                        self.afterUpdate()
+                        self.modalClose()
                         self.$message({
                             message: '修改信息成功',
                             type: 'success'
@@ -107,9 +100,8 @@
                     })
             },
             modalClose() {
-                let afterUpdateInfo = JOSN.parse(JSON.stringify(this.updateInfo))
-                this.$emit('afterUpdate', afterUpdateInfo)
-                this.updateInfo = {}
+                let afterUpdateInfo = JSON.parse(JSON.stringify(this.updateInfo))
+                this.$emit('afterClose', afterUpdateInfo)
                 this.$emit('update:visible', false)
             },
             beforeAvatarUpload(file) {
@@ -125,8 +117,8 @@
                 return isJPG && isLt2M
             },
             updateHandleAvatarSuccess(res, file) {
-                this.updateInfo.face = res.fileUrl
-                this.updateImageUrl = URL.createObjectURL(file.raw)
+                this.updateInfo.avatar = res.fileUrl
+                // this.updateImageUrl = URL.createObjectURL(file.raw)
             }
         }
     }

@@ -127,10 +127,6 @@
                                             localStorage.setItem('avatar', '../../../static/img/KOOL.jpg')
                                         }
                                         self.$router.push('/home')
-                                        self.$message({
-                                            message: '欢迎登录',
-                                            type: 'success'
-                                        })
                                     }
                                 )
                                 .catch(
