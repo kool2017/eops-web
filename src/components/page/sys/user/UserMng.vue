@@ -76,7 +76,7 @@
         <update-user :visible.sync="updateFormVisible" :update-info="updateInitInfo" @afterClose="refresh"
                      ref="editForm"></update-user>
         <view-user :visible.sync="viewFormVisible" :view-info="viewInitInfo"></view-user>
-        <set-role :visible.sync="roleTransferVisible"></set-role>
+        <set-role :visible.sync="roleTransferVisible" :user-info="roleInitInfo" :role-info="roleInfo"></set-role>
     </div>
 </template>
 <script>
@@ -100,11 +100,16 @@
                 selectedInfo: {},
                 updateInitInfo: {},
                 viewInitInfo: {},
+                roleInitInfo: {},
                 addFormVisible: false,
                 updateFormVisible: false,
                 viewFormVisible: false,
                 roleTransferVisible: false,
-                isDisabled: true
+                isDisabled: true,
+                roleInfo:{
+                    userRole: [],
+                    allRole: []
+                }
             }
         },
         created() {
@@ -205,32 +210,28 @@
                 self.viewFormVisible = true
             },
             showSetRole() {
-            },
-            refresh() {
-                this.query()
-            },
-            setRole() {
-                if (this.selectedInfo == null) {
-                    this.$alert('请选择一条记录', '提示', {
+                let self = this
+                if (self.selectedInfo == null) {
+                    self.$alert('请选择一条记录', '提示', {
                         confirmButtonText: '确定',
                         type: 'error'
                     })
-                    this.isDisabled = true
+                    self.isDisabled = true
                     return
                 }
-                this.roleTransferVisible = true
-                this.queryRole()
-                this.queryUserRole()
-
+                self.roleInitInfo = Object.assign({}, self.selectedInfo)
+                self.roleTransferVisible = true
+                self.queryRole()
+                self.queryUserRole()
             },
             queryRole() {
                 const self = this
-                let input = {SYROLEINFY: [{}]}
+                let input = {}
                 self.$http
-                    .post('/sys/role/queryRole', input)
+                    .post('/eops/role/get_all_roles', input)
                     .then((res) => {
                         let pkgOut = res.data
-                        self.allRole = pkgOut.SYROLEINFY
+                        self.roleInfo.allRole = pkgOut.data
                     })
                     .catch((err) => {
                         console.log(err)
@@ -243,16 +244,16 @@
             queryUserRole() {
                 const self = this
                 let input = {
-                    SYUSRCIDX: [self.selectedInfo]
+                    userId: self.selectedInfo.id
                 }
-                self.userRole = []
+                self.roleInfo.userRole = []
                 self.$http
-                    .post('/sys/user/queryUserRole', input)
+                    .post('/eops/role/get_user_roles', input)
                     .then((res) => {
                         let pkgOut = res.data
-                        for (let index = 0; index < pkgOut.SYROLEINFY.length; index++) {
-                            const element = pkgOut.SYROLEINFY[index];
-                            self.userRole.push(element.roleCode)
+                        for (let index = 0; index < pkgOut.data.length; index++) {
+                            const element = pkgOut.data[index];
+                            self.roleInfo.userRole.push(element.roleCode)
                         }
                     })
                     .catch((err) => {
@@ -262,6 +263,9 @@
                             type: 'error'
                         })
                     })
+            },
+            refresh() {
+                this.query()
             },
             resetPwd() {
                 let self = this
@@ -280,7 +284,7 @@
                 }).then(() => {
                     let input = self.selectedInfo
                     self.$http
-                        .post('/eops/user/resetPwd', input)
+                        .post('/eops/user/reset_pwd', input)
                         .then((res) => {
                             let pkgOut = res.data
                             self.$message({

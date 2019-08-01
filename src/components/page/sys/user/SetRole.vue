@@ -1,8 +1,8 @@
 <template>
     <el-dialog title="设置角色" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
         <el-card>
-            <el-transfer v-model="userRole" :data="allRole" :titles="['可赋予角色','已赋予角色']" :props="roleTransferProps">
-
+            <el-transfer v-model="roleInfo.userRole" :data="roleInfo.allRole" :titles="['可赋予角色','已赋予角色']"
+                         :props="roleTransferProps">
             </el-transfer>
         </el-card>
         <div slot="footer">
@@ -19,15 +19,15 @@
             visible: {
                 type: Boolean,
                 default: false
-            }
+            },
+            userInfo: {},
+            roleInfo: {}
         },
-        data(){
-            return{
-                userRole:[],
-                allRole:[],
+        data() {
+            return {
                 roleTransferProps: {
                     key: 'roleCode',
-                    label: 'name'
+                    label: 'roleName'
                 }
 
             }
@@ -35,25 +35,16 @@
         methods: {
             roleSubmit() {
                 const self = this
-                let secIn = []
-                for (let index = 0; index < self.userRole.length; index++) {
-                    const element = self.userRole[index];
-                    let propIn = {
-                        userCid: self.selectedInfo.userCid,
-                        roleCode: element
-                    }
-                    secIn.push(propIn)
-                }
                 let input = {
-                    SYUSRCIDX: [self.selectedInfo],
-                    SYUSRROLEX: secIn
+                    userId: self.userInfo.id,
+                    roleCodes: self.roleInfo.userRole
                 }
                 self.$http
-                    .post('/sys/user/setRole', input)
+                    .post('/eops/role/bind_user_role', input)
                     .then((res) => {
-                        this.roleTransferVisible = false
+                        self.modalClose()
                         self.$message({
-                            message: '授权成功',
+                            message: '设置角色成功',
                             type: 'success'
                         })
                     })
@@ -65,7 +56,6 @@
                         })
                     })
             },
-
             modalClose() {
                 this.$emit('update:visible', false);
             }
