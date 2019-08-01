@@ -73,8 +73,7 @@
             </el-col>
         </el-row>
         <add-user :visible.sync="addFormVisible" @afterClose="refresh"></add-user>
-        <update-user :visible.sync="updateFormVisible" :update-info="updateInitInfo" @afterClose="refresh"
-                     ref="editForm"></update-user>
+        <update-user :visible.sync="updateFormVisible" :update-info="updateInitInfo" @afterClose="refresh"></update-user>
         <view-user :visible.sync="viewFormVisible" :view-info="viewInitInfo"></view-user>
         <set-role :visible.sync="roleTransferVisible" :user-info="roleInitInfo" :role-info="roleInfo"></set-role>
     </div>
@@ -101,15 +100,15 @@
                 updateInitInfo: {},
                 viewInitInfo: {},
                 roleInitInfo: {},
+                roleInfo:{
+                    userRole: [],
+                    allRole: []
+                },
                 addFormVisible: false,
                 updateFormVisible: false,
                 viewFormVisible: false,
                 roleTransferVisible: false,
-                isDisabled: true,
-                roleInfo:{
-                    userRole: [],
-                    allRole: []
-                }
+                isDisabled: true
             }
         },
         created() {
@@ -124,6 +123,9 @@
                 this.viewFormVisible = false
                 this.roleTransferVisible = false
                 this.isDisabled = true
+            },
+            refresh() {
+                this.query()
             },
             query() {
                 this.page = {
@@ -263,9 +265,6 @@
                             type: 'error'
                         })
                     })
-            },
-            refresh() {
-                this.query()
             },
             resetPwd() {
                 let self = this

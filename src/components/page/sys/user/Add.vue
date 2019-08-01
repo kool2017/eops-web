@@ -93,8 +93,6 @@
                 self.$http
                     .post('/eops/user/add', input)
                     .then((res) => {
-                        let pkgOut = res.data
-                        self.addInfo = {}
                         self.modalClose()
                         self.$message({
                             message: '增加信息成功',
@@ -126,9 +124,8 @@
             },
             modalClose() {
                 let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))
-                this.$emit('afterClose', afterAddInfo)
                 this.addInfo = {}
-                // this.addImageUrl = ''
+                this.$emit('afterClose', afterAddInfo)
                 this.$emit('update:visible', false);
             }
         }
