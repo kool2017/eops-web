@@ -181,6 +181,7 @@
                                 const element = menuArray[index];
                                 if (element.deep == 0) {
                                     let node = {}
+                                    node.id = element.id
                                     node.menuCode = element.menuCode
                                     node.title = element.title
                                     node.fatherCode = element.fatherCode
@@ -225,6 +226,7 @@
                         const element = menuArray[index];
                         if (node.menuCode == element.fatherCode) {
                             let item = {}
+                            item.id = element.id
                             item.menuCode = element.menuCode
                             item.title = element.title
                             item.fatherCode = element.fatherCode

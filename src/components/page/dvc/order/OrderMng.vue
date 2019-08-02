@@ -31,7 +31,7 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @current-change="selectOne" height="386">
+                                  @row-click="selectOne" height="400">
                             <el-table-column prop="id" label="序号" width="80"></el-table-column>
                             <el-table-column prop="title" label="标题" width="150"></el-table-column>
                             <el-table-column prop="submitName" label="报修人姓名" width="100"></el-table-column>
@@ -59,49 +59,11 @@
                 </el-card>
             </el-col>
         </el-row>
-        <el-dialog title="提交维修工单" :visible.sync="addFormVisible" :close-on-click-modal="false">
-            <el-form :model="addInfo" :rules="addRules" ref="addForm" :label-position="labelPosition"
-                     label-width="120px">
-                <el-card>
-                    <span>
-                        <i class="el-icon-edit"></i> 设备信息:</span>
-                    <hr class="split"/>
-                    <div class="card-context">
-                        <el-row :gutter="10">
-                            <el-col :span="10">
-                                <el-form-item label="标题:" prop="title">
-                                    <el-input v-model="addInfo.title" size="small" maxlength="8"></el-input>
-                                </el-form-item>
-                                <el-form-item label="报修人姓名:" prop="submitName">
-                                    <el-input v-model="addInfo.submitName" size="small" maxlength="60"></el-input>
-                                </el-form-item>
-                                <el-form-item label="报修人电话:" prop="submitPhone">
-                                    <el-input v-model="addInfo.submitPhone" size="small" maxlength="60"></el-input>
-                                </el-form-item>
-                                <el-form-item label="设备id:" prop="deviceId">
-                                    <el-input v-model="addInfo.deviceId" size="small" maxlength="60"></el-input>
-                                </el-form-item>
-                                <el-form-item label="设备名称:" prop="deviceName">
-                                    <el-input v-model="addInfo.deviceName" size="small" maxlength="60"></el-input>
-                                </el-form-item>
-                                <el-form-item label="描述信息:" prop="description">
-                                    <el-input v-model="addInfo.description" size="small" maxlength="60" type="textarea" autosize></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-card>
-            </el-form>
-            <div slot="footer">
-                <el-button type="primary" size="small" icon="el-icon-check" @click="add">确 定</el-button>
-                <el-button size="small" icon="el-icon-close" @click="addFormVisible = false">取 消</el-button>
-            </div>
-        </el-dialog>
         <el-row class="cmd">
             <el-col>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('ADD')">报修</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('schedule')" :disabled="isDisabled">派单</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('reschedule')" :disabled="isDisabled">转派</el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showSubmit">报修</el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showSchedule" :disabled="isDisabled">派单</el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showReschedule" :disabled="isDisabled">转派</el-button>
                 <el-button type="primary" size="small" icon="el-icon-k-add" @click="accept" :disabled="isDisabled">接单</el-button>
                 <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('repair')" :disabled="isDisabled">维修登记</el-button>
                 <el-button type="danger" size="small" icon="el-icon-k-add" @click="editForm('stopRepair')" :disabled="isDisabled">停工</el-button>
