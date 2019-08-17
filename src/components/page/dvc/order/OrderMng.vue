@@ -62,15 +62,32 @@
         <el-row class="cmd">
             <el-col>
                 <el-button type="primary" size="small" icon="el-icon-k-add" @click="showSubmit">报修</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showSchedule" :disabled="isDisabled">派单</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showReschedule" :disabled="isDisabled">转派</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="accept" :disabled="isDisabled">接单</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('repair')" :disabled="isDisabled">维修登记</el-button>
-                <el-button type="danger" size="small" icon="el-icon-k-add" @click="editForm('stopRepair')" :disabled="isDisabled">停工</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('noteInfo')" :disabled="isDisabled">备注</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('finishRepair')" :disabled="isDisabled">完工</el-button>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="editForm('score')" :disabled="isDisabled">评价</el-button>
-                <el-button type="danger" size="small" icon="el-icon-delete" @click="editForm('cancel')" :disabled="isDisabled">关闭工单</el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showSchedule"
+                           :disabled="isDisabled">派单
+                </el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showReschedule"
+                           :disabled="isDisabled">转派
+                </el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="accept" :disabled="isDisabled">接单
+                </el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showRepair" :disabled="isDisabled">
+                    维修登记
+                </el-button>
+                <el-button type="danger" size="small" icon="el-icon-k-add" @click="stopRepair" :disabled="isDisabled">
+                    停工
+                </el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="noteInfo" :disabled="isDisabled">
+                    备注
+                </el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="finishRepair"
+                           :disabled="isDisabled">完工
+                </el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showScore" :disabled="isDisabled">
+                    评价
+                </el-button>
+                <el-button type="danger" size="small" icon="el-icon-delete" @click="cancel" :disabled="isDisabled">
+                    关闭工单
+                </el-button>
             </el-col>
         </el-row>
     </div>
@@ -180,139 +197,41 @@
                     this.isDisabled = false
                 }
             },
-            editForm(formType) {
-                let self = this
-                if (formType === 'ADD') {
-                    self.addInfo = {}
-                    self.addFormVisible = true
-                } else if (formType === 'UPDATE') {
-                    if (self.selectedInfo == null) {
-                        self.$alert('请选择一条记录', '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                        self.isDisabled = true
-                        return
-                    }
-                    self.updateInfo['id'] = self.selectedInfo['id']
-                    self.updateInfo['deviceName'] = self.selectedInfo['deviceName']
-                    self.updateInfo['deviceType'] = self.selectedInfo['deviceType']
-                    self.updateInfo['state'] = self.selectedInfo['state']
-                    self.updateFormVisible = true
-                } else {
-                    console.log('表单类型错误')
-                    self.$alert('表单类型错误', '提示', {
-                        confirmButtonText: '确定',
-                        type: 'error'
-                    })
-                    return
-                }
+            showSubmit() {
+
             },
-            add() {
-                let self = this
-                let validRet = false
-                self.$refs['addForm'].validate((valid) => {
-                    validRet = valid
-                })
-                if (validRet == false) {
-                    return
-                }
-                let input = self.addInfo
-                self.$http
-                    .post('/eops/device/add', input)
-                    .then((res) => {
-                        let pkgOut = res.data
-                        self.init()
-                        self.query()
-                        self.$message({
-                            message: '增加信息成功',
-                            type: 'success'
-                        })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
+            showSchedule() {
             },
-            update() {
-                let self = this
-                let validRet = false
-                self.$refs['updateForm'].validate((valid) => {
-                    validRet = valid
-                })
-                if (validRet == false) {
-                    return
-                }
-                let input = self.updateInfo
-                self.$http
-                    .post('/eops/device/modify', input)
-                    .then((res) => {
-                        let pkgOut = res.data
-                        self.init()
-                        self.query()
-                        self.$message({
-                            message: '修改信息成功',
-                            type: 'success'
-                        })
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
+            showReschedule() {
             },
-            del() {
-                let self = this
-                self.$confirm('是否删除设备信息[' + self.selectedInfo.deviceName + ']?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'info'
-                }).then(() => {
-                    let input = self.selectedInfo
-                    self.$http
-                        .post('/eops/device/delete', input)
-                        .then((res) => {
-                            let pkgOut = res.data
-                            self.init()
-                            self.query()
-                            self.$message({
-                                message: '删除成功',
-                                type: 'success'
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                            self.$alert(err, '提示', {
-                                confirmButtonText: '确定',
-                                type: 'error'
-                            })
-                        })
-                }).catch((erro) => {
-                })
+            accept() {
+
             },
-            stateStr(state){
+            showRepair() {
+            },
+            stopRepair() {
+            },
+            noteInfo() {
+            },
+            finishRepair() {
+            },
+            showScore() {
+            },
+            cancel() {
+
+            },
+            stateStr(state) {
                 let stateStr = ''
-                if (state==1) {
+                if (state == 1) {
                     stateStr = '正常'
-                }else if (state == 2) {
+                } else if (state == 2) {
                     stateStr = '维修中'
-                }else if (state == 3) {
+                } else if (state == 3) {
                     stateStr = '损坏'
-                }else if (state == 4) {
+                } else if (state == 4) {
                     stateStr = '报废'
                 }
                 return stateStr;
-            },
-            accept(){
-
-            },
-            cancel(){
-
             }
         }
     }
