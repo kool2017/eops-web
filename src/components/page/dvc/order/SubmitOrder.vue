@@ -1,7 +1,6 @@
 <template>
-
-    <el-dialog title="提交维修工单" :visible.sync="addFormVisible" :close-on-click-modal="false">
-        <el-form :model="addInfo" :rules="addRules" ref="addForm" :label-position="labelPosition"
+    <el-dialog title="提交维修工单" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
+        <el-form :model="addInfo" :rules="addRules" ref="addForm" label-position="left"
                  label-width="120px">
             <el-card>
                     <span>
@@ -35,14 +34,81 @@
         </el-form>
         <div slot="footer">
             <el-button type="primary" size="small" icon="el-icon-check" @click="add">确 定</el-button>
-            <el-button size="small" icon="el-icon-close" @click="addFormVisible = false">取 消</el-button>
+            <el-button size="small" icon="el-icon-close" @click="modalClose">取 消</el-button>
         </div>
     </el-dialog>
 </template>
 
 <script>
     export default {
-        name: "SubmitOrder"
+        name: "SubmitOrder",
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data() {
+            return {
+                addInfo: {
+                    autCode: '',
+                    autName: ''
+                },
+                addRules: {
+                    title: [
+                        {required: true, message: '请输入标题', trigger: 'blur'},
+                        {max: 100, message: '最大长度100', trigger: 'blur'}
+                    ],
+                    submitName: [
+                        {required: true, message: '请输入报修人姓名', trigger: 'blur'},
+                        {max: 100, message: '最大长度100', trigger: 'blur'}
+                    ],
+                    submitPhone: [
+                        {required: true, message: '请输入报修人电话', trigger: 'blur'},
+                        {max: 100, message: '最大长度100', trigger: 'blur'}
+                    ],
+                    deviceName: [
+                        {required: true, message: '请输入设备名称', trigger: 'blur'},
+                        {max: 100, message: '最大长度100', trigger: 'blur'}
+                    ]
+                }
+            }
+        },
+        methods: {
+            add() {
+                let self = this
+                let validRet = false
+                self.$refs['addForm'].validate((valid) => {
+                    validRet = valid
+                })
+                if (validRet == false) {
+                    return
+                }
+                let input = self.addInfo
+                self.$http
+                    .post('/eops/device/submit_itil', input)
+                    .then((res) => {
+                        self.modalClose()
+                        self.$message({
+                            message: '报修成功',
+                            type: 'success'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
+            },
+            modalClose() {
+                let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))
+                this.addInfo = {}
+                this.$emit('afterClose', afterAddInfo)
+                this.$emit('update:visible', false);
+            }
+        }
     }
 </script>
 

@@ -15,6 +15,18 @@
                                 <el-input v-model="condition.submitPhone" size="small" maxlength="8"></el-input>
                             </el-col>
                             <el-col :span="2">
+                                状态:
+                            </el-col>
+                            <el-col :span="3"> <el-select v-model="condition.state" size="small" clearable>
+                                <el-option label="1-已提交" value="1"></el-option>
+                                <el-option label="2-待施工" value="2"></el-option>
+                                <el-option label="3-施工中" value="3"></el-option>
+                                <el-option label="4-停工" value="4"></el-option>
+                                <el-option label="5-完工" value="5"></el-option>
+                                <el-option label="6-结束" value="6"></el-option>
+                            </el-select>
+                            </el-col>
+                            <el-col :span="2">
                                 <el-button type="primary" size="small" icon="el-icon-search" @click="query">查询
                                 </el-button>
                             </el-col>
@@ -42,7 +54,7 @@
                             <el-table-column prop="description" label="描述信息" width="150"></el-table-column>
                             <el-table-column prop="evaluation" label="评价" width="100"></el-table-column>
                             <el-table-column prop="score" label="评分" width="80"></el-table-column>
-                            <el-table-column prop="state" label="状态" width="80"></el-table-column>
+                            <el-table-column prop="state_str" label="状态" width="80"></el-table-column>
                             <el-table-column prop="createdTime" label="创建时间" width="160"></el-table-column>
                             <el-table-column prop="updatedTime" label="更新时间" width="160"></el-table-column>
                         </el-table>
@@ -90,15 +102,22 @@
                 </el-button>
             </el-col>
         </el-row>
+        <add-order :visible.sync="addFormVisible" @afterClose="refresh"></add-order>
     </div>
 </template>
 
 <script>
+    import addOrder from './SubmitOrder'
+
     export default {
+        components: {addOrder},
         name: "OrderMng",
         data() {
             return {
-                condition: {},
+                condition: {
+                    submitPhone:"",
+                    state:""
+                },
                 retList: [],
                 page: {
                     pageSize: 10,
@@ -107,22 +126,8 @@
                     currentPage: 1
                 },
                 selectedInfo: {},
-                addInfo: {},
-                addRules: {
-                    deviceName: [
-                        {required: true, message: '请输入设备名称', trigger: 'blur'}
-                    ]
-                },
                 addFormVisible: false,
-                updateInfo: {},
-                updateRules: {
-                    deviceName: [
-                        {required: true, message: '请输入设备名称', trigger: 'blur'}
-                    ]
-                },
-                updateFormVisible: false,
-                isDisabled: true,
-                labelPosition: 'left'
+                isDisabled: true
             }
         },
         created() {
@@ -131,22 +136,22 @@
         },
         methods: {
             init() {
-                this.addInfo = {}
-                this.updateInfo = {}
                 this.selectedInfo = {}
                 this.isDisabled = true
                 this.addFormVisible = false
-                this.updateFormVisible = false
+            },
+            refresh() {
+                this.query()
             },
             queryPage() {
                 let self = this
                 var input = self.condition
-                input['pageSize'] = self.page.pageSize
-                input['total'] = self.page.total
-                input['pageCount'] = self.page.pageCount
-                input['currentPage'] = self.page.currentPage
+                input.pageSize = self.page.pageSize
+                input.total = self.page.total
+                input.pageCount = self.page.pageCount
+                input.currentPage = self.page.currentPage
                 self.$http
-                    .post('/eops/device/get_page', input)
+                    .post('/eops/device/get_order_page', input)
                     .then((res) => {
                         var pkgOut = res.data
                         self.retList = pkgOut.data
@@ -198,7 +203,7 @@
                 }
             },
             showSubmit() {
-
+                this.addFormVisible = true
             },
             showSchedule() {
             },
@@ -223,13 +228,17 @@
             stateStr(state) {
                 let stateStr = ''
                 if (state == 1) {
-                    stateStr = '正常'
+                    stateStr = '已提交'
                 } else if (state == 2) {
-                    stateStr = '维修中'
+                    stateStr = '待施工'
                 } else if (state == 3) {
-                    stateStr = '损坏'
+                    stateStr = '施工中'
                 } else if (state == 4) {
-                    stateStr = '报废'
+                    stateStr = '停工'
+                } else if (state == 5) {
+                    stateStr = '完工'
+                } else if (state == 6) {
+                    stateStr = '结束'
                 }
                 return stateStr;
             }
