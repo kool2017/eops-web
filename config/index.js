@@ -4,8 +4,8 @@ var path = require('path')
 module.exports = {
     build: {
         env: require('./prod.env'),
-        index: path.resolve(__dirname, '../deploy/eops-web/index.html'),
-        assetsRoot: path.resolve(__dirname, '../deploy/eops-web'),
+        index: path.resolve(__dirname, '../dist/index.html'),
+        assetsRoot: path.resolve(__dirname, '../dist'),
         assetsSubDirectory: 'static',
         assetsPublicPath: './',
         productionSourceMap: false,
@@ -36,7 +36,7 @@ module.exports = {
             //     }
             // },
             '/eops': {
-                target: 'http://localhost:10101',
+                target: 'http://192.168.110.138:10101',
                 changeOrigin: true
             }
         },
