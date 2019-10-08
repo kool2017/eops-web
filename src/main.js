@@ -92,7 +92,7 @@ axios.interceptors.response.use(
     function (response) {
         let pkgOut = response.data
         let code = pkgOut.code
-        let errorMsg = pkgOut.msg
+        let errorMsg = pkgOut.message
         if (code != 0) {
             console.log(errorMsg)
             return Promise.reject(errorMsg)
