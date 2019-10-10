@@ -51,8 +51,10 @@
         data() {
             return {
                 addInfo: {
-                    autCode: '',
-                    autName: ''
+                    title: '',
+                    submitName: '',
+                    submitPhone: '',
+                    deviceName: ''
                 },
                 addRules: {
                     title: [

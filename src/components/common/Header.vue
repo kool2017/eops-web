@@ -21,7 +21,7 @@
                             <el-row :gutter="10">
                                 <el-col :span="10">
                                     <el-form-item label="用户号:">
-                                        <el-input v-model="viewInfo.userDtl.userCid" size="small" readonly></el-input>
+                                        <el-input v-model="viewInfo.userDtl.id" size="small" readonly></el-input>
                                     </el-form-item>
                                     <el-form-item label="登录名:">
                                         <el-input v-model="viewInfo.userDtl.loginName" size="small" readonly></el-input>
@@ -29,31 +29,20 @@
                                     <el-form-item label="手机:">
                                         <el-input v-model="viewInfo.userDtl.phone" size="small" readonly></el-input>
                                     </el-form-item>
-                                    <el-form-item label="邮箱:">
-                                        <el-input v-model="viewInfo.userDtl.mail" size="small" readonly></el-input>
-                                    </el-form-item>
                                 </el-col>
                                 <el-col :span="10" :offset="1">
-                                    <el-form-item label="用户类型:">
-                                        <el-select v-model="viewInfo.userDtl.type" size="small" disabled>
-                                            <el-option label="A-正常" value="A"></el-option>
-                                            <el-option label="F-冻结" value="F"></el-option>
-                                            <el-option label="E-异常" value="E"></el-option>
-                                            <el-option label="P-非工作" value="P"></el-option>
-                                            <el-option label="C-关闭" value="C"></el-option>
+                                    <el-form-item label="状态:">
+                                        <el-select v-model="viewInfo.userDtl.state" size="small" disabled>
+                                            <el-option label="1-正常" value="1"></el-option>
+                                            <el-option label="2-关闭" value="2"></el-option>
+                                            <el-option label="3-锁定" value="3"></el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item label="是否证书卡用户:">
-                                        <el-select v-model="viewInfo.userDtl.hasKey" size="small" disabled>
-                                            <el-option label="Y-是" value="Y"></el-option>
-                                            <el-option label="N-否" value="N"></el-option>
-                                        </el-select>
+                                    <el-form-item label="密码错误次数:">
+                                        <el-input v-model="viewInfo.userDtl.errorTimes" size="small" readonly></el-input>
                                     </el-form-item>
-                                    <el-form-item label="证书卡号:">
-                                        <el-input v-model="viewInfo.userDtl.keyUid" size="small" readonly></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="员工编号:">
-                                        <el-input v-model="viewInfo.userDtl.staffCid" size="small" readonly></el-input>
+                                    <el-form-item label="邮箱:">
+                                        <el-input v-model="viewInfo.userDtl.email" size="small" readonly></el-input>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -98,6 +87,7 @@
 </template>
 <script>
     import {Base64} from 'js-base64'
+
     export default {
         data() {
             return {
@@ -107,8 +97,7 @@
                 viewFormVisible: false,
                 labelPosition: 'left',
                 viewInfo: {
-                    userDtl: {},
-                    loginLog: []
+                    userDtl: {}
                 },
                 editInfo: {},
                 editRules: {},
@@ -134,20 +123,16 @@
             queryDtl() {
                 const self = this
                 let input = {
-                    SYUSRCIDX: [
-                        {
-                            userCid: localStorage.getItem('userCid')
-                        }
-                    ]
+                    id: localStorage.getItem('userId')
                 }
                 self.$http
-                    .post('/sys/user/queryUserDetail', input)
+                    .post('/eops/user/get_user', input)
                     .then(function (res) {
                         let pkgOut = res.data
                         self.viewInfo = {
-                            userDtl: pkgOut.SYUSRDTLZ[0],
-                            loginLog: pkgOut.SYLOGINLOGZ
+                            userDtl: pkgOut.data
                         }
+                        console.log(self.viewInfo)
                     })
                     .catch((err) => {
                         console.log(err)

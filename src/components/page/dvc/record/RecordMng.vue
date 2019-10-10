@@ -8,10 +8,16 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-row :gutter="20">
-                            <el-col :span="2">
-                                记录类型:
+                            <el-col :span="3">
+                                工单id:
+                            </el-col>
+                            <el-col :span="4">
+                                <el-input v-model="condition.orderId" size="small" maxlength="11"></el-input>
                             </el-col>
                             <el-col :span="3">
+                                记录类型:
+                            </el-col>
+                            <el-col :span="4">
                                 <el-select v-model="condition.recordType" size="small" clearable>
                                     <el-option label="1-报修" value="1"></el-option>
                                     <el-option label="2-派单" value="2"></el-option>
@@ -42,14 +48,14 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @row-click="selectOne" height="400">
+                                  @current-change="selectOne" height="400">
                             <el-table-column prop="id" label="序号" width="80"></el-table-column>
-                            <el-table-column prop="recordType" label="记录类型" width="150"></el-table-column>
+                            <el-table-column prop="recordType_str" label="记录类型" width="100"></el-table-column>
                             <el-table-column prop="orderId" label="工单id" width="100"></el-table-column>
                             <el-table-column prop="submitName" label="报修人" width="150"></el-table-column>
-                            <el-table-column prop="submitPhone" label="报修人手机号" width="80"></el-table-column>
+                            <el-table-column prop="submitPhone" label="报修人手机号" width="150"></el-table-column>
                             <el-table-column prop="repairUserName" label="维修人" width="150"></el-table-column>
-                            <el-table-column prop="repairPhone" label="维修人手机号" width="80"></el-table-column>
+                            <el-table-column prop="repairPhone" label="维修人手机号" width="150"></el-table-column>
                             <el-table-column prop="content" label="描述信息" width="150"></el-table-column>
                             <el-table-column prop="createdTime" label="创建时间" width="160"></el-table-column>
                             <el-table-column prop="updatedTime" label="更新时间" width="160"></el-table-column>
@@ -82,13 +88,21 @@
                     total: 0,
                     pageCount: 0,
                     currentPage: 1
-                }
+                },
+                selectedInfo: {}
             }
         },
         created() {
+            this.init()
             this.query()
         },
         methods: {
+            init() {
+                this.selectedInfo = {}
+            },
+            refresh() {
+                this.query()
+            },
             query() {
                 this.page = {
                     pageSize: 10,
@@ -114,6 +128,7 @@
                             let element = self.retList[index]
                             element.createdTime = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
                             element.updatedTime = self.$moment(element.updatedTime).format('YYYY-MM-DD HH:mm:ss')
+                            element.recordType_str = self.recordTypeStr(element.recordType)
                         }
                     })
                     .catch((err) => {
@@ -134,6 +149,35 @@
                 let self = this
                 self.page.currentPage = currentPage
                 self.queryPage()
+            },
+            selectOne(val) {
+                this.init()
+                this.selectedInfo = val
+            },
+            recordTypeStr(recordType) {
+                let recordTypeStr = ''
+                if (recordType == 1) {
+                    recordTypeStr = '报修'
+                } else if (recordType == 2) {
+                    recordTypeStr = '派单'
+                } else if (recordType == 3) {
+                    recordTypeStr = '转派'
+                } else if (recordType == 4) {
+                    recordTypeStr = '接单'
+                } else if (recordType == 5) {
+                    recordTypeStr = '维修登记'
+                } else if (recordType == 6) {
+                    recordTypeStr = '停工'
+                }else if (recordType == 7) {
+                    recordTypeStr = '留言'
+                }else if (recordType == 8) {
+                    recordTypeStr = '完工'
+                }else if (recordType == 9) {
+                    recordTypeStr = '评价'
+                }else if (recordType == 10) {
+                    recordTypeStr = '关闭工单'
+                }
+                return recordTypeStr;
             }
         }
     }

@@ -31,7 +31,7 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @row-click="selectOne" height="400">
+                                  @current-change="selectOne" height="400">
                             <el-table-column prop="cntCode" label="计数器码" width="150"></el-table-column>
                             <el-table-column prop="cntName" label="名称" width="250"></el-table-column>
                             <el-table-column prop="curValue" label="当前值" width="120"></el-table-column>

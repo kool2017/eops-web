@@ -33,7 +33,7 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @row-click="selectOne" height="400">
+                                  @current-change="selectOne" height="400">
                             <el-table-column prop="id" label="用户号" width="150" sortable></el-table-column>
                             <el-table-column prop="loginName" label="登录名" width="300"></el-table-column>
                             <el-table-column prop="userName" label="姓名" width="300"></el-table-column>

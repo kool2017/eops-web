@@ -37,7 +37,7 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @row-click="selectOne" height="400">
+                                  @current-change="selectOne" height="400">
                             <el-table-column prop="id" label="权限id" width="150"></el-table-column>
                             <el-table-column prop="autCode" label="权限编码" width="150"></el-table-column>
                             <el-table-column prop="autName" label="权限名称" width="300"></el-table-column>

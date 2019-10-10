@@ -31,7 +31,7 @@
                     <hr class="split"/>
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
-                                  @row-click="selectOne" height="400">
+                                  @current-change="selectOne" height="400">
                             <el-table-column prop="id" label="序号" width="80"></el-table-column>
                             <el-table-column prop="deviceName" label="设备名称" width="150"></el-table-column>
                             <el-table-column prop="deviceType" label="设备类型" width="100"></el-table-column>
@@ -156,7 +156,7 @@
                 self.page.currentPage = currentPage
                 self.queryPage()
             },
-            selectOne(row, column, event) {
+            selectOne(row) {
                 this.selectedInfo = row
                 if (row == null) {
                     this.isDisabled = true
