@@ -9,9 +9,6 @@
                 <div class="card-context">
                     <el-row :gutter="20">
                         <el-col :span="20">
-                            <el-form-item label="应用id:" prop="appid">
-                                <el-input v-model="addInfo.appid" size="small" maxlength="20"></el-input>
-                            </el-form-item>
                             <el-form-item label="应用名称:" prop="appName">
                                 <el-input v-model="addInfo.appName" size="small" maxlength="100"></el-input>
                             </el-form-item>

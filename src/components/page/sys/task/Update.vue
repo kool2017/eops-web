@@ -1,5 +1,4 @@
 <template>
-
     <el-dialog title="修改任务" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
         <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" label-position="left" label-width="120px">
             <el-card>
@@ -7,7 +6,7 @@
                         <i class="el-icon-edit"></i> 任务信息:</span>
                 <hr class="split" />
                 <div class="card-context">
-                    <el-row :gutter="20">
+                    <el-row :gutter="10">
                         <el-col :span="10">
                             <el-form-item label="任务类型:" prop="taskType">
                                 <el-select v-model="updateInfo.taskType" size="small" clearable>

@@ -1,22 +1,20 @@
 <template>
-
-    <el-dialog title="修改应用" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
+    <el-dialog title="修改元数据" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
         <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" label-position="left" label-width="120px">
             <el-card>
                     <span>
-                        <i class="el-icon-edit"></i> 应用信息:</span>
+                        <i class="el-icon-edit"></i>元数据信息:</span>
                 <hr class="split" />
                 <div class="card-context">
                     <el-row :gutter="20">
                         <el-col :span="20">
-                            <el-form-item label="应用名称:" prop="appName">
-                                <el-input v-model="updateInfo.appName" size="small" maxlength="100"></el-input>
+                            <el-form-item label="数据名称:" prop="dataName">
+                                <el-input v-model="updateInfo.dataName" size="small" maxlength="100"></el-input>
                             </el-form-item>
-                            <el-form-item label="状态:" prop="state">
-                                <el-select v-model="updateInfo.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
-                                </el-select>
+                        </el-col>
+                        <el-col :span="20">
+                            <el-form-item label="定时任务cron表达式:" prop="cron">
+                                <el-input v-model="updateInfo.cron" size="small" maxlength="100"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -43,17 +41,6 @@
         data(){
             return{
                 updateRules: {
-                    appid: [
-                        {required: true, message: '请输入应用id', trigger: 'blur'},
-                        {max: 20, message: '最大长度20', trigger: 'blur'}
-                    ],
-                    appName: [
-                        {required: true, message: '请输入应用名称', trigger: 'blur'},
-                        {max: 100, message: '最大长度100', trigger: 'blur'}
-                    ],
-                    state: [
-                        {required: true, message: '请选择状态', trigger: 'blur'},
-                    ]
                 }
             }
         },
@@ -69,7 +56,7 @@
                 }
                 let input = self.updateInfo
                 self.$http
-                    .post('/eops/sys/app/update', input)
+                    .post('/eops/df/meta/update', input)
                     .then((res) => {
                         self.modalClose()
                         self.$message({
