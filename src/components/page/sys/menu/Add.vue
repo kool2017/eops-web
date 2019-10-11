@@ -14,10 +14,10 @@
                                 <el-input v-model="addInfo.menuCode" size="small" maxlength="10"></el-input>
                             </el-form-item>
                             <el-form-item label="上级菜单:" prop="fatherCode">
-                                <el-input v-model="addInfo.fatherCode" size="small" maxlength="10"></el-input>
+                                <el-input v-model="addInfo.fatherCode" size="small" maxlength="10" :readonly="notAddRoot"></el-input>
                             </el-form-item>
                             <el-form-item label="深度:" prop="deep">
-                                <el-input v-model.number="addInfo.deep" size="small"></el-input>
+                                <el-input v-model.number="addInfo.deep" size="small" :readonly="notAddRoot"></el-input>
                             </el-form-item>
                             <el-form-item label="请求url:" prop="url">
                                 <el-input v-model="addInfo.url" size="small" maxlength="100"></el-input>
@@ -31,7 +31,7 @@
                                 <el-input v-model="addInfo.title" size="small" maxlength="100"></el-input>
                             </el-form-item>
                             <el-form-item label="根菜单:" prop="rootCode">
-                                <el-input v-model="addInfo.rootCode" size="small" maxlength="10"></el-input>
+                                <el-input v-model="addInfo.rootCode" size="small" maxlength="10" :readonly="notAddRoot"></el-input>
                             </el-form-item>
                             <el-form-item label="序号:" prop="seq">
                                 <el-input v-model.number="addInfo.seq" size="small"></el-input>
@@ -64,22 +64,15 @@
             visible: {
                 type: Boolean,
                 default: false
+            },
+            addInfo: {},
+            notAddRoot:{
+                type:Boolean,
+                default:true
             }
         },
         data() {
             return {
-                addInfo: {
-                    menuCode: '',
-                    fatherCode: '',
-                    deep: '',
-                    url: '',
-                    viewPath: '',
-                    title: '',
-                    rootCode: '',
-                    seq: '',
-                    icon: '',
-                    state: ''
-                },
                 addRules: {
                     menuCode: [
                         {required: true, message: '请输入菜单编码', trigger: 'blur'},
@@ -107,6 +100,7 @@
                         {type: 'number', min: 0, message: '最小值0', trigger: 'blur'}
                     ],
                     url: [
+                        {required: true, message: '请输入url', trigger: 'blur'},
                         {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
                     viewPath: [
@@ -151,7 +145,6 @@
             },
             modalClose() {
                 let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))
-                this.addInfo = {}
                 this.$emit('afterClose', afterAddInfo)
                 this.$emit('update:visible', false);
             }

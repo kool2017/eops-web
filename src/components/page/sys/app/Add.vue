@@ -1,27 +1,24 @@
 <template>
 
-    <el-dialog title="增加设备信息" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
-        <el-form :model="addInfo" :rules="addRules" ref="addForm" label-position="left"
-                 label-width="120px">
+    <el-dialog title="增加应用" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
+        <el-form :model="addInfo" :rules="addRules" ref="addForm" label-position="left" label-width="120px">
             <el-card>
                     <span>
-                        <i class="el-icon-edit"></i> 设备信息:</span>
+                        <i class="el-icon-edit"></i> 应用信息:</span>
                 <hr class="split"/>
                 <div class="card-context">
                     <el-row :gutter="20">
                         <el-col :span="20">
-                            <el-form-item label="设备名称:" prop="deviceName">
-                                <el-input v-model="addInfo.deviceName" size="small" maxlength="8"></el-input>
+                            <el-form-item label="应用id:" prop="appid">
+                                <el-input v-model="addInfo.appid" size="small" maxlength="20"></el-input>
                             </el-form-item>
-                            <el-form-item label="设备类型:" prop="deviceType">
-                                <el-input v-model="addInfo.deviceType" size="small" maxlength="60"></el-input>
+                            <el-form-item label="应用名称:" prop="appName">
+                                <el-input v-model="addInfo.appName" size="small" maxlength="100"></el-input>
                             </el-form-item>
                             <el-form-item label="状态:" prop="state">
                                 <el-select v-model="addInfo.state" size="small" clearable>
                                     <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-维修中" value="2"></el-option>
-                                    <el-option label="3-损坏" value="3"></el-option>
-                                    <el-option label="4-报废" value="4"></el-option>
+                                    <el-option label="2-关闭" value="2"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -48,19 +45,21 @@
         data() {
             return {
                 addInfo: {
-                    deviceName: '',
-                    state: '',
-                    deviceType: ''
+                    appid: '',
+                    appName: '',
+                    state: ''
                 },
                 addRules: {
-                    deviceName: [
-                        {required: true, message: '请输入设备名称', trigger: 'blur'}
+                    appid: [
+                        {required: true, message: '请输入应用id', trigger: 'blur'},
+                        {max: 20, message: '最大长度20', trigger: 'blur'}
                     ],
-                    deviceType: [
-                        {required: true, message: '请输入设备类型', trigger: 'blur'}
+                    appName: [
+                        {required: true, message: '请输入应用名称', trigger: 'blur'},
+                        {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
                     state: [
-                        {required: true, message: '请选择状态', trigger: 'blur'}
+                        {required: true, message: '请选择状态', trigger: 'blur'},
                     ]
                 }
             }
@@ -77,7 +76,7 @@
                 }
                 let input = self.addInfo
                 self.$http
-                    .post('/eops/device/add', input)
+                    .post('/eops/sys/app/add_app', input)
                     .then((res) => {
                         self.modalClose()
                         self.$message({

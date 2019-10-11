@@ -63,20 +63,20 @@
                 updateRules: {
                     paramCode: [
                         {required: true, message: '请输入参数编码', trigger: 'blur'},
-                        {min: 8, max: 8, message: '最大长度8最小长度8', trigger: 'blur'}
+                        { max: 20, message: '最大长度20', trigger: 'blur'}
                     ],
                     paramValue: [
                         {max: 512, message: '最大长度512', trigger: 'blur'}
                     ],
                     paramName: [
-                        {max: 60, message: '最大长度60', trigger: 'blur'}
+                        {max: 100, message: '最大长度100', trigger: 'blur'}
                     ],
                     rootCode: [
                         {required: true, message: '请输入根参数', trigger: 'blur'},
-                        {min: 8, max: 8, message: '最大长度8最小长度8', trigger: 'blur'}
+                        { max: 20, message: '最大长度20', trigger: 'blur'}
                     ],
                     fatherCode: [
-                        {max: 8, message: '最大长度8', trigger: 'blur'}
+                        { max: 20, message: '最大长度20', trigger: 'blur'}
                     ],
                     deep: [
                         {required: true, message: '请输入深度', trigger: 'blur'},

@@ -1,5 +1,5 @@
 <template>
-    <div class="paramMng">
+    <div class="taskMng">
         <el-row :gutter="10">
             <el-col :span="24">
                 <el-card class="condition-card">
@@ -9,22 +9,29 @@
                     <div class="card-context">
                         <el-row :gutter="20">
                             <el-col :span="2">
-                                参数码:
+                                任务类型:
                             </el-col>
                             <el-col :span="3">
-                                <el-input v-model="condition.paramCode" size="small" maxlength="20"></el-input>
-                            </el-col>
-                            <el-col :span="2">
-                                根参数:
-                            </el-col>
-                            <el-col :span="3">
-                                <el-input v-model="condition.rootCode" size="small" maxlength="20"></el-input>
-                            </el-col>
-                            <el-col :span="2">
-                                父参数:
+                                <el-select v-model="condition.taskType" size="small" clearable>
+                                    <el-option label="1-数据流定时任务" value="1"></el-option>
+                                    <el-option label="2-http请求任务" value="2"></el-option>
+                                </el-select>
                             </el-col>
                             <el-col :span="3">
-                                <el-input v-model="condition.fatherCode" size="small" maxlength="20"></el-input>
+                                任务名称:
+                            </el-col>
+                            <el-col :span="3">
+                                <el-input v-model="condition.taskName" size="small" maxlength="100"></el-input>
+                            </el-col>
+                            <el-col :span="3">
+                                任务配置状态:
+                            </el-col>
+                            <el-col :span="3">
+                                <el-select v-model="condition.state" size="small" clearable>
+                                    <el-option label="1-正常" value="1"></el-option>
+                                    <el-option label="2-关闭" value="2"></el-option>
+                                    <el-option label="3-锁定" value="3"></el-option>
+                                </el-select>
                             </el-col>
                             <el-col :span="2">
                                 <el-button type="primary" size="small" icon="el-icon-search" @click="query">查询
@@ -44,14 +51,13 @@
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="400">
-                            <el-table-column prop="paramCode" label="参数编码" width="150"></el-table-column>
-                            <el-table-column prop="paramKey" label="参数键" width="150"></el-table-column>
-                            <el-table-column prop="paramValue" label="参数值" width="150"></el-table-column>
-                            <el-table-column prop="paramName" label="参数名称" width="300"></el-table-column>
-                            <el-table-column prop="rootCode" label="根参数" width="150"></el-table-column>
-                            <el-table-column prop="fatherCode" label="父参数" width="150"></el-table-column>
-                            <el-table-column prop="deep" label="深度" width="80"></el-table-column>
-                            <el-table-column prop="seq" label="序号" width="80"></el-table-column>
+                            <el-table-column prop="taskType_str" label="任务类型" width="100"></el-table-column>
+                            <el-table-column prop="taskName" label="任务名称" width="150"></el-table-column>
+                            <el-table-column prop="cron" label="cron表达式" width="300"></el-table-column>
+                            <el-table-column prop="refId" label="关联id" width="100"></el-table-column>
+                            <el-table-column prop="httpUrl" label="http请求url" width="100"></el-table-column>
+                            <el-table-column prop="appid" label="应用id" width="100"></el-table-column>
+                            <el-table-column prop="state_str" label="任务配置状态" width="100"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -67,24 +73,25 @@
         <el-row class="cmd">
             <el-col>
                 <el-button type="primary" size="small" icon="el-icon-k-add" @click="showAdd">增加</el-button>
-                <el-button type="primary" size="small" icon="el-icon-edit" @click="showUpdate"
-                           :disabled="isDisabled">修改
+                <el-button type="primary" size="small" icon="el-icon-edit" @click="showUpdate" :disabled="isDisabled">
+                    修改
                 </el-button>
-                <el-button type="danger" size="small" icon="el-icon-delete" @click="del" :disabled="isDisabled">删除
+                <el-button type="danger" size="small" icon="el-icon-delete" @click="del" :disabled="isDisabled">关闭
                 </el-button>
             </el-col>
         </el-row>
-        <add-param :visible.sync="addFormVisible" @afterClose="refresh"></add-param>
-        <update-param :visible.sync="updateFormVisible" :update-info="updateInitInfo"
-                      @afterClose="refresh"></update-param>
+        <add-task :visible.sync="addFormVisible" @afterClose="refresh"></add-task>
+        <update-task :visible.sync="updateFormVisible" :update-info="updateInitInfo"
+                    @afterClose="refresh"></update-task>
     </div>
 </template>
 <script>
-    import addParam from './Add'
-    import updateParam from './Update'
+    import addTask from './Add'
+    import updateTask from './Update'
 
     export default {
-        components: {addParam, updateParam},
+        name:"AppMng",
+        components: {addTask, updateTask},
         data() {
             return {
                 condition: {},
@@ -108,33 +115,13 @@
         },
         methods: {
             init() {
-                this.addInfo = {}
-                this.updateInfo = {}
                 this.selectedInfo = {}
-                this.isDisabled = true
                 this.addFormVisible = false
                 this.updateFormVisible = false
+                this.isDisabled = true
             },
             refresh() {
                 this.query()
-            },
-            queryPage() {
-                let self = this
-                var input = self.condition
-                input.currentPage = self.page.currentPage
-                input.pageSize = self.page.pageSize
-                self.$http
-                    .post('/eops/sys/param/getPage', input)
-                    .then((res) => {
-                        var pkgOut = res.data
-                        self.retList = pkgOut.data
-                    })
-                    .catch((err) => {
-                        self.$alert(err, '提示', {
-                            confirmButtonText: '确定',
-                            type: 'error'
-                        })
-                    })
             },
             query() {
                 this.page = {
@@ -144,6 +131,36 @@
                     currentPage: 1
                 }
                 this.queryPage();
+            },
+            queryPage() {
+                let self = this
+                var input = Object.assign({}, self.condition)
+                input.currentPage = self.page.currentPage
+                input.pageSize = self.page.pageSize
+                self.$http
+                    .post('/eops/sys/app/getPage', input)
+                    .then((res) => {
+                        var pkgOut = res.data
+                        self.retList = pkgOut.data
+                        self.page.total = pkgOut.total
+                        self.page.pageCount = pkgOut.pageCount
+                        for (let index = 0; index < self.retList.length; index++) {
+                            const element = self.retList[index];
+                            if (element.state != null) {
+                                element.state_str = self.stateStr(element.state)
+                            }
+                            if (element.taskType != null) {
+                                element.taskType_str = self.taskTypeStr(element.taskType)
+                            }
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
             },
             handleSizeChange(pageSize) {
                 let self = this
@@ -156,9 +173,9 @@
                 self.page.currentPage = currentPage
                 self.queryPage()
             },
-            selectOne(val) {
-                this.selectedInfo = val
-                if (val == null) {
+            selectOne(row, column, event) {
+                this.selectedInfo = row
+                if (row == null) {
                     this.isDisabled = true
                 } else {
                     this.isDisabled = false
@@ -182,23 +199,26 @@
             },
             del() {
                 let self = this
-                self.$confirm('是否删除参数[' + self.selectedInfo.paramName + ']?', '提示', {
+                self.$confirm('是否关闭任务[' + self.selectedInfo.taskName + ']?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'info'
                 }).then(() => {
-                    let input = self.selectedInfo
+                    let input = {
+                        id: self.selectedInfo.id
+                    }
                     self.$http
-                        .post('/eops/sys/param/delete', input)
+                        .post('/eops/sys/task/close', input)
                         .then((res) => {
                             self.init()
                             self.query()
                             self.$message({
-                                message: '删除成功',
+                                message: '关闭成功',
                                 type: 'success'
                             })
                         })
                         .catch((err) => {
+                            console.log(err)
                             self.$alert(err, '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error'
@@ -206,6 +226,26 @@
                         })
                 }).catch((erro) => {
                 })
+            },
+            taskTypeStr(taskType) {
+                let taskTypeStr = ''
+                if (taskType == 1) {
+                    taskTypeStr = '数据流定时任务'
+                } else if (taskType == 2) {
+                    taskTypeStr = 'http请求任务'
+                }
+                return taskTypeStr;
+            },
+            stateStr(state) {
+                let stateStr = ''
+                if (state == 1) {
+                    stateStr = '正常'
+                } else if (state == 2) {
+                    stateStr = '关闭'
+                } else if (state == 3) {
+                    stateStr = '锁定'
+                }
+                return stateStr;
             }
         }
     }

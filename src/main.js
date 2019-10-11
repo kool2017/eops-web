@@ -49,7 +49,6 @@ Vue.use(ElementUI)
 localStorage.setItem('appName', '后台管理系统')
 //通信配置
 axios.defaults.baseURL = process.env.BASE_URL
-// axios.defaults.baseURL = '/mock'
 axios.defaults.withCredentials = true
 // 请求拦截
 axios.interceptors.request.use(

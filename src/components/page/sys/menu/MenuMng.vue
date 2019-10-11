@@ -22,7 +22,26 @@
                             <el-col :span="24">
                                 <el-tree class="menu-tree" :data="treeData" :props="defaultProps" default-expand-all
                                          :filter-node-method="filterNode" ref="tree" @node-click="selectOne"
-                                         :highlight-current="true">
+                                         :highlight-current="true" :expand-on-click-node="false">
+                                    <span class="custom-tree-node" slot-scope="{ node, data }">
+                                        <span>{{ node.label }}</span><span style="margin-left: 40px"></span>
+                                        <span>
+                                            <el-button style="margin-right: 0px;padding-right: 0px"
+                                                type="text"
+                                                size="mini"
+                                                icon="el-icon-circle-plus-outline"
+                                                circle
+                                                @click="() => append(data)">
+                                            </el-button>
+                                            <el-button style="margin-left: 0px;padding-left: 0px"
+                                                type="text"
+                                                size="mini"
+                                                icon="el-icon-remove-outline"
+                                                circle
+                                                @click="() => remove(node, data)">
+                                            </el-button>
+                                        </span>
+                                    </span>
                                 </el-tree>
                             </el-col>
                         </el-row>
@@ -113,15 +132,13 @@
         </el-row>
         <el-row class="cmd">
             <el-col>
-                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showAdd">增加</el-button>
+                <el-button type="primary" size="small" icon="el-icon-k-add" @click="showAdd">增加根菜单</el-button>
                 <el-button type="primary" size="small" icon="el-icon-edit" @click="showUpdate" :disabled="isDisabled">
                     修改
                 </el-button>
-                <el-button type="danger" size="small" icon="el-icon-delete" @click="del" :disabled="isDisabled">删除
-                </el-button>
             </el-col>
         </el-row>
-        <add-menu :visible.sync="addFormVisible" @afterClose="refresh"></add-menu>
+        <add-menu :visible.sync="addFormVisible" :add-info="addInfo" :not-add-root="notAddRoot" @afterClose="refresh"></add-menu>
         <update-menu :visible.sync="updateFormVisible" :update-info="updateInitInfo"
                      @afterClose="refresh"></update-menu>
     </div>
@@ -142,10 +159,12 @@
                 filterText: '',
                 menuInfo: {},
                 selectedInfo: {},
+                addInfo: {},
                 updateInitInfo: {},
                 addFormVisible: false,
                 updateFormVisible: false,
-                isDisabled: true
+                isDisabled: true,
+                notAddRoot: false
             }
         },
         created() {
@@ -246,6 +265,8 @@
                 return subArray
             },
             showAdd() {
+                this.addInfo = {};
+                this.notAddRoot = false
                 this.addFormVisible = true
             },
             showUpdate() {
@@ -260,6 +281,44 @@
                 }
                 self.updateInitInfo = Object.assign({}, self.selectedInfo)
                 self.updateFormVisible = true
+            },
+            append(data) {
+                this.notAddRoot = true
+                this.addInfo = {};
+                this.addInfo.rootCode = data.rootCode
+                this.addInfo.fatherCode = data.menuCode
+                this.addInfo.deep = data.deep+1
+                this.addFormVisible = true
+            },
+            remove(node, data) {
+                let self = this
+                self.$confirm('是否删除菜单[' + data.title + ']?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'info'
+                }).then(() => {
+                    let input = {
+                        menuCode: data.menuCode
+                    }
+                    self.$http
+                        .post('/eops/menu/delete', input)
+                        .then((res) => {
+                            self.init()
+                            self.query()
+                            self.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            self.$alert(err, '提示', {
+                                confirmButtonText: '确定',
+                                type: 'error'
+                            })
+                        })
+                }).catch((erro) => {
+                })
             },
             del() {
                 let self = this
