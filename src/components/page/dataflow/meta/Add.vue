@@ -13,9 +13,6 @@
                                     <el-autocomplete v-model="addInfo.appid" size="small"
                                                      :fetch-suggestions="getAllAppid"></el-autocomplete>
                                 </el-form-item>
-                                <el-form-item label="数据唯一标识码:" prop="dataKey">
-                                    <el-input v-model="addInfo.dataKey" size="small" maxlength="20"></el-input>
-                                </el-form-item>
                                 <el-form-item label="数据名称:" prop="dataName">
                                     <el-input v-model="addInfo.dataName" size="small" maxlength="100"></el-input>
                                 </el-form-item>

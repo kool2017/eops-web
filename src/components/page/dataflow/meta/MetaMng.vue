@@ -45,14 +45,14 @@
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="400">
                             <el-table-column prop="appid" label="应用id" width="100"></el-table-column>
-                            <el-table-column prop="dataKey" label="数据唯一标识码" width="150"></el-table-column>
-                            <el-table-column prop="dataName" label="数据名称" width="300"></el-table-column>
-                            <el-table-column prop="readerType_str" label="数据采集渠道" width="100"></el-table-column>
-                            <el-table-column prop="writerType_str" label="保存形式" width="100"></el-table-column>
-                            <el-table-column prop="readUrl" label="http地址" width="100"></el-table-column>
+                            <el-table-column prop="dataKey" label="数据唯一标识码" width="120"></el-table-column>
+                            <el-table-column prop="dataName" label="数据名称" width="200"></el-table-column>
                             <el-table-column prop="addFlag_str" label="增量标志" width="100"></el-table-column>
-                            <el-table-column prop="addColumn" label="增量条件字段" width="100"></el-table-column>
-                            <el-table-column prop="destName" label="存储文件名或表名" width="100"></el-table-column>
+                            <el-table-column prop="addColumn" label="增量字段" width="100"></el-table-column>
+                            <el-table-column prop="readerType_str" label="数据采集渠道" width="120"></el-table-column>
+                            <el-table-column prop="readUrl" label="http地址" width="400"></el-table-column>
+                            <el-table-column prop="writerType_str" label="保存形式" width="100"></el-table-column>
+                            <el-table-column prop="destName" label="文件名(表名)" width="120"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"

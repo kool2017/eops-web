@@ -1,20 +1,26 @@
 <template>
-    <el-dialog title="修改元数据" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
+    <el-dialog title="修改产品" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
         <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" label-position="left" label-width="120px">
             <el-card>
                     <span>
-                        <i class="el-icon-edit"></i>元数据信息:</span>
+                        <i class="el-icon-edit"></i> 产品信息:</span>
                 <hr class="split" />
                 <div class="card-context">
                     <el-row :gutter="20">
                         <el-col :span="20">
-                            <el-form-item label="数据名称:" prop="dataName">
-                                <el-input v-model="updateInfo.dataName" size="small" maxlength="100"></el-input>
+                            <el-form-item label="产品码:" prop="productCode">
+                                <el-input v-model="updateInfo.productCode" size="small" maxlength="100"></el-input>
                             </el-form-item>
-                        </el-col>
-                        <el-col :span="20">
-                            <el-form-item label="cron表达式:" prop="cron">
-                                <el-input v-model="updateInfo.cron" size="small" maxlength="100"></el-input>
+                            <el-form-item label="产品名称:" prop="productName">
+                                <el-input v-model="updateInfo.productName" size="small" maxlength="100"></el-input>
+                            </el-form-item>
+                            <el-form-item label="产品类型:" prop="productType">
+                                <el-select v-model="updateInfo.productType" size="small" clearable>
+                                    <el-option label="1-dataflow元数据" value="1"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="数据唯一标识:" prop="dataKey">
+                                <el-input v-model="updateInfo.dataKey" size="small" maxlength="100"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -56,7 +62,7 @@
                 }
                 let input = self.updateInfo
                 self.$http
-                    .post('/eops/df/meta/update', input)
+                    .post('/eops/cs/product/update', input)
                     .then((res) => {
                         self.modalClose()
                         self.$message({

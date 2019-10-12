@@ -1,5 +1,5 @@
 <template>
-    <div class="taskMng">
+    <div class="productMng">
         <el-row :gutter="10">
             <el-col :span="24">
                 <el-card class="condition-card">
@@ -7,32 +7,12 @@
                         <i class="el-icon-search"></i> 查询条件: </span>
                     <hr class="split"/>
                     <div class="card-context">
-                        <el-row :gutter="20">
+                        <el-row :gutter="10">
                             <el-col :span="2">
-                                任务类型:
+                                产品码:
                             </el-col>
-                            <el-col :span="3">
-                                <el-select v-model="condition.taskType" size="small" clearable>
-                                    <el-option label="1-数据流定时任务" value="1"></el-option>
-                                    <el-option label="2-http请求任务" value="2"></el-option>
-                                    <el-option label="3-计费任务" value="3"></el-option>
-                                </el-select>
-                            </el-col>
-                            <el-col :span="3">
-                                任务名称:
-                            </el-col>
-                            <el-col :span="3">
-                                <el-input v-model="condition.taskName" size="small" maxlength="100"></el-input>
-                            </el-col>
-                            <el-col :span="3">
-                                任务配置状态:
-                            </el-col>
-                            <el-col :span="3">
-                                <el-select v-model="condition.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
-                                    <el-option label="3-锁定" value="3"></el-option>
-                                </el-select>
+                            <el-col :span="4">
+                                <el-input v-model="condition.productCode" size="small" maxlength="100"></el-input>
                             </el-col>
                             <el-col :span="2">
                                 <el-button type="primary" size="small" icon="el-icon-search" @click="query">查询
@@ -52,13 +32,9 @@
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="400">
-                            <el-table-column prop="taskType_str" label="任务类型" width="120"></el-table-column>
-                            <el-table-column prop="taskName" label="任务名称" width="150"></el-table-column>
-                            <el-table-column prop="cron" label="cron表达式" width="150"></el-table-column>
-                            <el-table-column prop="refId" label="关联id" width="120"></el-table-column>
-                            <el-table-column prop="httpUrl" label="http请求url" width="200"></el-table-column>
-                            <el-table-column prop="appid" label="应用id" width="100"></el-table-column>
-                            <el-table-column prop="state_str" label="任务配置状态" width="120"></el-table-column>
+                            <el-table-column prop="productCode" label="产品码" width="100"></el-table-column>
+                            <el-table-column prop="productName" label="产品名称" width="150"></el-table-column>
+                            <el-table-column prop="productType_str" label="产品类型" width="100"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -77,22 +53,22 @@
                 <el-button type="primary" size="small" icon="el-icon-edit" @click="showUpdate" :disabled="isDisabled">
                     修改
                 </el-button>
-                <el-button type="danger" size="small" icon="el-icon-delete" @click="del" :disabled="isDisabled">关闭
+                <el-button type="danger" size="small" icon="el-icon-delete" @click="del" :disabled="isDisabled">删除
                 </el-button>
             </el-col>
         </el-row>
-        <add-task :visible.sync="addFormVisible" @afterClose="refresh"></add-task>
-        <update-task :visible.sync="updateFormVisible" :update-info="updateInitInfo"
-                    @afterClose="refresh"></update-task>
+        <add-product :visible.sync="addFormVisible" @afterClose="refresh"></add-product>
+        <update-product :visible.sync="updateFormVisible" :update-info="updateInitInfo"
+                    @afterClose="refresh"></update-product>
     </div>
 </template>
 <script>
-    import addTask from './Add'
-    import updateTask from './Update'
+    import addProduct from './Add'
+    import updateProduct from './Update'
 
     export default {
-        name:"AppMng",
-        components: {addTask, updateTask},
+        name:"ProductMng",
+        components: {addProduct, updateProduct},
         data() {
             return {
                 condition: {},
@@ -139,7 +115,7 @@
                 input.currentPage = self.page.currentPage
                 input.pageSize = self.page.pageSize
                 self.$http
-                    .post('/eops/sys/task/get_task_page', input)
+                    .post('/eops/cs/product/getPage', input)
                     .then((res) => {
                         var pkgOut = res.data
                         self.retList = pkgOut.data
@@ -147,11 +123,8 @@
                         self.page.pageCount = pkgOut.pageCount
                         for (let index = 0; index < self.retList.length; index++) {
                             const element = self.retList[index];
-                            if (element.state != null) {
-                                element.state_str = self.stateStr(element.state)
-                            }
-                            if (element.taskType != null) {
-                                element.taskType_str = self.taskTypeStr(element.taskType)
+                            if (element.productType != null) {
+                                element.productType_str = self.productTypeStr(element.productType)
                             }
                         }
                     })
@@ -200,21 +173,19 @@
             },
             del() {
                 let self = this
-                self.$confirm('是否关闭任务[' + self.selectedInfo.taskName + ']?', '提示', {
+                self.$confirm('是否删除产品[' + self.selectedInfo.productName + ']?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'info'
                 }).then(() => {
-                    let input = {
-                        id: self.selectedInfo.id
-                    }
+                    let input = self.selectedInfo
                     self.$http
-                        .post('/eops/sys/task/close', input)
+                        .post('/eops/cs/product/delete', input)
                         .then((res) => {
                             self.init()
                             self.query()
                             self.$message({
-                                message: '关闭成功',
+                                message: '删除成功',
                                 type: 'success'
                             })
                         })
@@ -228,27 +199,12 @@
                 }).catch((erro) => {
                 })
             },
-            taskTypeStr(taskType) {
-                let taskTypeStr = ''
-                if (taskType == 1) {
-                    taskTypeStr = '数据流定时任务'
-                } else if (taskType == 2) {
-                    taskTypeStr = 'http请求任务'
-                } else if (taskType == 3) {
-                    taskTypeStr = '计费定时任务'
+            productTypeStr(productType) {
+                let productTypeStr = ''
+                if (productType == 1) {
+                    productTypeStr = 'dataflow元数据'
                 }
-                return taskTypeStr;
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '关闭'
-                } else if (state == 3) {
-                    stateStr = '锁定'
-                }
-                return stateStr;
+                return productTypeStr;
             }
         }
     }

@@ -1,20 +1,35 @@
 <template>
-    <el-dialog title="修改元数据" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
+    <el-dialog title="修改费用项" :visible.sync="visible" :close-on-click-modal="false" :before-close="modalClose">
         <el-form :model="updateInfo" :rules="updateRules" ref="updateForm" label-position="left" label-width="120px">
             <el-card>
                     <span>
-                        <i class="el-icon-edit"></i>元数据信息:</span>
-                <hr class="split" />
+                        <i class="el-icon-edit"></i> 费用项信息:</span>
+                <hr class="split"/>
                 <div class="card-context">
                     <el-row :gutter="20">
                         <el-col :span="20">
-                            <el-form-item label="数据名称:" prop="dataName">
-                                <el-input v-model="updateInfo.dataName" size="small" maxlength="100"></el-input>
+                            <el-form-item label="计量单位:" prop="units">
+                                <el-select v-model="updateInfo.units" size="small" clearable>
+                                    <el-option label="1-次" value="1"></el-option>
+                                    <el-option label="2-秒" value="2"></el-option>
+                                </el-select>
                             </el-form-item>
-                        </el-col>
-                        <el-col :span="20">
-                            <el-form-item label="cron表达式:" prop="cron">
-                                <el-input v-model="updateInfo.cron" size="small" maxlength="100"></el-input>
+                            <el-form-item label="单价:" prop="price">
+                                <el-input v-model="updateInfo.price" size="small" maxlength="100"></el-input>
+                            </el-form-item>
+                            <el-form-item label="计费模式:" prop="costMode">
+                                <el-select v-model="updateInfo.costMode" size="small" clearable>
+                                    <el-option label="1-按次计费" value="1"></el-option>
+                                    <el-option label="2-按时长计费" value="2"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="生效时间:" prop="enableTime">
+                                <el-date-picker v-model="updateInfo.enableTime" type="datetime" placeholder="选择生效时间"
+                                                size="small"></el-date-picker>
+                            </el-form-item>
+                            <el-form-item label="失效时间:" prop="disableTime">
+                                <el-date-picker v-model="updateInfo.disableTime" type="datetime" placeholder="选择失效时间"
+                                                size="small"></el-date-picker>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -38,13 +53,12 @@
             },
             updateInfo: {}
         },
-        data(){
-            return{
-                updateRules: {
-                }
+        data() {
+            return {
+                updateRules: {}
             }
         },
-        methods:{
+        methods: {
             update() {
                 let self = this
                 let validRet = false
@@ -56,7 +70,7 @@
                 }
                 let input = self.updateInfo
                 self.$http
-                    .post('/eops/df/meta/update', input)
+                    .post('/eops/cs/catalog/update', input)
                     .then((res) => {
                         self.modalClose()
                         self.$message({

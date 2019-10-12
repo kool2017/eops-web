@@ -12,6 +12,7 @@
                                 <el-select v-model="updateInfo.taskType" size="small" clearable>
                                     <el-option label="1-数据流定时任务" value="1"></el-option>
                                     <el-option label="2-http请求任务" value="2"></el-option>
+                                    <el-option label="3-计费任务" value="3"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="cron表达式:" prop="cron">
