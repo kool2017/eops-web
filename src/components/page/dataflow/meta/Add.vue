@@ -78,12 +78,13 @@
                                     <el-table-column prop="colName" label="字段名" width="100"></el-table-column>
                                     <el-table-column prop="colLength" label="字段长度" width="150"></el-table-column>
                                     <el-table-column prop="comment" label="注释" width="300"></el-table-column>
-                                    <el-table-column fixed="right" prop="comment" label="操作" width="100">
+                                    <el-table-column fixed="right" label="操作" width="100">
                                         <template slot-scope="scope">
-                                            <el-button type="primary" size="small"
-                                                       @click="del(scope.$index, scope.row)">
-                                                删除
-                                            </el-button>
+                                            <el-tooltip effect="dark" content="删除" placement="top" open-delay=1000>
+                                                <el-button type="text" icon="el-icon-remove-outline"
+                                                           @click="del(scope.$index, scope.row)">
+                                                </el-button>
+                                            </el-tooltip>
                                         </template>
                                     </el-table-column>
                                 </el-table>
@@ -185,12 +186,11 @@
             },
             addColumn() {
                 let newCol = Object.assign({}, this.columnInfo)
+                this.columnInfo = {}
                 this.columnMeta.push(newCol)
                 this.addColumnFormVisible = false;
             },
             del(index, row) {
-                console.log(index)
-                console.log(JSON.stringify(row))
                 this.columnMeta.splice(index, 1)
             },
             getAllAppid(queryString, cb) {

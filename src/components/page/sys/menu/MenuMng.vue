@@ -18,31 +18,48 @@
                                 </el-input>
                             </el-col>
                         </el-row>
-                        <el-row :gutter="10">
+                        <el-row :gutter="2">
                             <el-col :span="24">
-                                <el-tree class="menu-tree" :data="treeData" :props="defaultProps" default-expand-all
-                                         :filter-node-method="filterNode" ref="tree" @node-click="selectOne"
-                                         :highlight-current="true" :expand-on-click-node="false">
-                                    <span class="custom-tree-node" slot-scope="{ node, data }">
-                                        <span>{{ node.label }}</span><span style="margin-left: 40px"></span>
-                                        <span>
-                                            <el-button style="margin-right: 0px;padding-right: 0px"
-                                                type="text"
-                                                size="mini"
-                                                icon="el-icon-circle-plus-outline"
-                                                circle
-                                                @click="() => append(data)">
-                                            </el-button>
-                                            <el-button style="margin-left: 0px;padding-left: 0px"
-                                                type="text"
-                                                size="mini"
-                                                icon="el-icon-remove-outline"
-                                                circle
-                                                @click="() => remove(node, data)">
-                                            </el-button>
+                                <div class="tree">
+                                    <el-tree class="menu-tree" :data="treeData" :props="defaultProps" default-expand-all
+                                             :filter-node-method="filterNode" ref="tree" @node-click="selectOne"
+                                             :highlight-current="true" :expand-on-click-node="false" style="overflow:auto">
+                                        <span class="custom-tree-node" slot-scope="{ node, data }">
+                                            <span>{{ node.label }}</span>
+                                            <span style="margin-left: 40px"></span>
+                                            <span>
+                                                <el-tooltip effect="dark" content="增加子菜单" placement="top" open-delay=1000>
+                                                    <el-button style="margin-right: 0px;padding-right: 0px"
+                                                               type="text"
+                                                               size="mini"
+                                                               icon="el-icon-circle-plus-outline"
+                                                               circle
+                                                               @click="() => append(data)">
+                                                    </el-button>
+                                                </el-tooltip>
+                                                <el-tooltip effect="dark" content="修改" placement="top" open-delay=1000>
+                                                    <el-button style="margin-left: 0px;padding-left: 0px;padding-right: 0px"
+                                                               type="text"
+                                                               size="mini"
+                                                               icon="el-icon-k-update"
+                                                               circle
+                                                               @click="() => update(data)">
+                                                    </el-button>
+                                                </el-tooltip>
+                                                <el-tooltip effect="dark" content="删除" placement="top" open-delay=1000>
+                                                    <el-button style="margin-left: 0px;padding-left: 0px"
+                                                               type="text"
+                                                               size="mini"
+                                                               icon="el-icon-delete"
+                                                               circle
+                                                               @click="() => remove(node, data)">
+                                                    </el-button>
+                                                </el-tooltip>
+                                            </span>
                                         </span>
-                                    </span>
-                                </el-tree>
+                                    </el-tree>
+
+                                </div>
                             </el-col>
                         </el-row>
                     </div>
@@ -133,12 +150,10 @@
         <el-row class="cmd">
             <el-col>
                 <el-button type="primary" size="small" icon="el-icon-k-add" @click="showAdd">增加根菜单</el-button>
-                <el-button type="primary" size="small" icon="el-icon-edit" @click="showUpdate" :disabled="isDisabled">
-                    修改
-                </el-button>
             </el-col>
         </el-row>
-        <add-menu :visible.sync="addFormVisible" :add-info="addInfo" :not-add-root="notAddRoot" @afterClose="refresh"></add-menu>
+        <add-menu :visible.sync="addFormVisible" :add-info="addInfo" :not-add-root="notAddRoot"
+                  @afterClose="refresh"></add-menu>
         <update-menu :visible.sync="updateFormVisible" :update-info="updateInitInfo"
                      @afterClose="refresh"></update-menu>
     </div>
@@ -163,7 +178,6 @@
                 updateInitInfo: {},
                 addFormVisible: false,
                 updateFormVisible: false,
-                isDisabled: true,
                 notAddRoot: false
             }
         },
@@ -179,7 +193,6 @@
         methods: {
             init() {
                 this.selectedInfo = {}
-                this.isDisabled = true
                 this.addFormVisible = false
                 this.updateFormVisible = false
             },
@@ -232,11 +245,6 @@
             },
             selectOne(val) {
                 this.selectedInfo = val
-                if (val == null) {
-                    this.isDisabled = true
-                } else {
-                    this.isDisabled = false
-                }
             },
             getSubMenus(node, menuArray) {
                 let subArray = []
@@ -276,7 +284,6 @@
                         confirmButtonText: '确定',
                         type: 'error'
                     })
-                    self.isDisabled = true
                     return
                 }
                 self.updateInitInfo = Object.assign({}, self.selectedInfo)
@@ -287,8 +294,13 @@
                 this.addInfo = {};
                 this.addInfo.rootCode = data.rootCode
                 this.addInfo.fatherCode = data.menuCode
-                this.addInfo.deep = data.deep+1
+                this.addInfo.deep = data.deep + 1
                 this.addFormVisible = true
+            },
+            update(data) {
+                let self = this
+                self.updateInitInfo = Object.assign({}, data)
+                self.updateFormVisible = true
             },
             remove(node, data) {
                 let self = this

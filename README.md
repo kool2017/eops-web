@@ -51,3 +51,6 @@ node+vue+elementUI+Axios
 1.元数据管理
 2.费用项管理
 3.产品管理
+
+2019-10-15 bi系统 luyu
+1.智能报表

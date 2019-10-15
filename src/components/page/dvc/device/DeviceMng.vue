@@ -39,8 +39,8 @@
                             <el-table-column prop="startTime" label="开始使用时间" width="150"></el-table-column>
                             <el-table-column prop="repairTimes" label="维修次数" width="100"></el-table-column>
                             <el-table-column prop="state_str" label="状态" width="80"></el-table-column>
-                            <el-table-column prop="createdTime" label="创建时间" width="160"></el-table-column>
-                            <el-table-column prop="updatedTime" label="更新时间" width="160"></el-table-column>
+                            <el-table-column prop="createdTime_str" label="创建时间" width="160"></el-table-column>
+                            <el-table-column prop="updatedTime_str" label="更新时间" width="160"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -132,8 +132,8 @@
                         self.page.pageCount = pkgOut.pageCount
                         for (let index = 0; index < self.retList.length; index++) {
                             let element = self.retList[index]
-                            element.createdTime = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
-                            element.updatedTime = self.$moment(element.updatedTime).format('YYYY-MM-DD HH:mm:ss')
+                            element.createdTime_str = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
+                            element.updatedTime_str = self.$moment(element.updatedTime).format('YYYY-MM-DD HH:mm:ss')
                             element.state_str = self.stateStr(element.state)
                         }
                     })

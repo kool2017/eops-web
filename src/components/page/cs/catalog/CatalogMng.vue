@@ -52,7 +52,7 @@
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="400">
-                            <el-table-column prop="catalogCode" label="费用项码" width="100"></el-table-column>
+                            <el-table-column prop="catalogCode" label="费用项码" width="120"></el-table-column>
                             <el-table-column prop="catalogName" label="名称" width="150"></el-table-column>
                             <el-table-column prop="units_str" label="计量单位" width="100"></el-table-column>
                             <el-table-column prop="price" label="单价(分)" width="100"></el-table-column>
@@ -237,6 +237,10 @@
                     unitsStr = '次'
                 } else if (units == 2) {
                     unitsStr = '秒'
+                } else if (units == 3) {
+                    unitsStr = '十次'
+                } else if (units == 4) {
+                    unitsStr = '百次'
                 }
                 return unitsStr;
             },

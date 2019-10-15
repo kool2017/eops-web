@@ -82,7 +82,7 @@ a {
 
 /*Readme*/
 
-.ms-doc .el-checkbox__input.is-disabled+.el-checkbox__label {
+.ms-doc .el-checkbox__input.is-disabled + .el-checkbox__label {
     color: #333;
     cursor: pointer;
 }
@@ -138,7 +138,8 @@ a {
 }
 
 .el-row {
-    margin-top: 5px;
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
 .cmd {
@@ -159,5 +160,14 @@ a {
 }
 
 .tree-card {
+    height: 750px;
+}
+
+.info-card {
+    height: 400px;
+}
+
+.tree{
     height: 600px;
+    overflow: auto;
 }

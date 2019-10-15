@@ -32,9 +32,9 @@
                     <div class="card-context">
                         <el-table :data="retList" border style="width: 100%" ref="retTable" highlight-current-row
                                   @current-change="selectOne" height="400">
-                            <el-table-column prop="productCode" label="产品码" width="100"></el-table-column>
+                            <el-table-column prop="productCode" label="产品码" width="120"></el-table-column>
                             <el-table-column prop="productName" label="产品名称" width="150"></el-table-column>
-                            <el-table-column prop="productType_str" label="产品类型" width="100"></el-table-column>
+                            <el-table-column prop="productType_str" label="产品类型" width="150"></el-table-column>
                         </el-table>
                         <div class="pagination">
                             <el-pagination layout="total, sizes, prev, pager, next, jumper"
