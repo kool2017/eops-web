@@ -1,14 +1,14 @@
 <template>
-    <el-dialog title="绑定菜单" :visible.sync="visible" :close-on-click-modal="false"
+    <el-dialog title="授权报表" :visible.sync="visible" :close-on-click-modal="false"
                :before-close="modalClose">
         <el-card>
-            <el-transfer v-model="menuInfo.autMenu" :data="menuInfo.allMenu" :titles="['未绑定菜单','已绑定菜单']"
-                         :props="menuTransferProps">
+            <el-transfer v-model="authInfo.authUsers" :data="authInfo.allUsers" :titles="['无权限用户','有权限用户']"
+                         :props="authTransferProps">
 
             </el-transfer>
         </el-card>
         <div slot="footer">
-            <el-button type="primary" size="small" icon="el-icon-check" @click="bindMenuSubmit">确 定</el-button>
+            <el-button type="primary" size="small" icon="el-icon-check" @click="auth">确 定</el-button>
             <el-button size="small" icon="el-icon-close" @click="modalClose">取 消</el-button>
         </div>
     </el-dialog>
@@ -16,29 +16,32 @@
 
 <script>
     export default {
-        name: "BindMenu",
+        name: "AuthReport",
         props: {
             visible: {
                 type: Boolean,
                 default: false
             },
-            authInfo: {},
-            menuInfo: {}
+            authInfo: {
+                reportId: null,
+                authUsers: null,
+                allUsers: null
+            }
         },
         data() {
             return {
-                menuTransferProps: {
-                    key: 'menuCode',
-                    label: 'title'
+                authTransferProps: {
+                    key: 'userBitKey',
+                    label: 'userBitName'
                 }
             }
         },
         methods: {
-            bindMenuSubmit() {
+            auth() {
                 const self = this
                 let input = {
-                    autCode: self.authInfo.autCode,
-                    menuCodes: self.menuInfo.autMenu
+                    reportId: self.authInfo.reportId,
+                    userAuthBit: userAuthBit
                 }
                 self.$http
                     .post('/eops/aut/bind_menu_aut', input)
@@ -58,8 +61,8 @@
                     })
             },
             modalClose() {
-                this.menuInfo.autMenu = []
-                this.menuInfo.allMenu = []
+                this.authInfo.authUsers = []
+                this.authInfo.allUsers = []
                 this.$emit('update:visible', false)
             }
         }

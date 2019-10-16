@@ -23,12 +23,14 @@
                                 <div class="tree">
                                     <el-tree class="menu-tree" :data="treeData" :props="defaultProps" default-expand-all
                                              :filter-node-method="filterNode" ref="tree" @node-click="selectOne"
-                                             :highlight-current="true" :expand-on-click-node="false" style="overflow:auto">
+                                             :highlight-current="true" :expand-on-click-node="false"
+                                             style="overflow:auto">
                                         <span class="custom-tree-node" slot-scope="{ node, data }">
                                             <span>{{ node.label }}</span>
                                             <span style="margin-left: 40px"></span>
                                             <span>
-                                                <el-tooltip effect="dark" content="增加子菜单" placement="top" open-delay=1000>
+                                                <el-tooltip effect="dark" content="增加子菜单" placement="top"
+                                                            :open-delay="tooltipOpenDelay">
                                                     <el-button style="margin-right: 0px;padding-right: 0px"
                                                                type="text"
                                                                size="mini"
@@ -37,16 +39,19 @@
                                                                @click="() => append(data)">
                                                     </el-button>
                                                 </el-tooltip>
-                                                <el-tooltip effect="dark" content="修改" placement="top" open-delay=1000>
-                                                    <el-button style="margin-left: 0px;padding-left: 0px;padding-right: 0px"
-                                                               type="text"
-                                                               size="mini"
-                                                               icon="el-icon-k-update"
-                                                               circle
-                                                               @click="() => update(data)">
+                                                <el-tooltip effect="dark" content="修改" placement="top"
+                                                            :open-delay="tooltipOpenDelay">
+                                                    <el-button
+                                                        style="margin-left: 0px;padding-left: 0px;padding-right: 0px"
+                                                        type="text"
+                                                        size="mini"
+                                                        icon="el-icon-k-update"
+                                                        circle
+                                                        @click="() => update(data)">
                                                     </el-button>
                                                 </el-tooltip>
-                                                <el-tooltip effect="dark" content="删除" placement="top" open-delay=1000>
+                                                <el-tooltip effect="dark" content="删除" placement="top"
+                                                            :open-delay="tooltipOpenDelay">
                                                     <el-button style="margin-left: 0px;padding-left: 0px"
                                                                type="text"
                                                                size="mini"
@@ -178,7 +183,8 @@
                 updateInitInfo: {},
                 addFormVisible: false,
                 updateFormVisible: false,
-                notAddRoot: false
+                notAddRoot: false,
+                tooltipOpenDelay: 1000
             }
         },
         created() {

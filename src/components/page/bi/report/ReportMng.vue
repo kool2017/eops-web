@@ -29,17 +29,17 @@
                                         <span>{{ node.label }}</span><span style="margin-left: 40px"></span>
                                         <span>
                                                 <el-tooltip effect="dark" content="生成报表" placement="top"
-                                                            open-delay="1000">
+                                                            :open-delay="tooltipOpenDelay">
                                             <el-button style="margin-left: 0px;padding-left: 0px"
                                                        type="text"
                                                        size="mini"
                                                        icon="el-icon-download"
                                                        circle
-                                                       @click="() => createReport(data)">
+                                                       @click="() => showCreate(node, data)">
                                             </el-button>
                                                 </el-tooltip>
                                                 <el-tooltip effect="dark" content="修改报表" placement="top"
-                                                            open-delay="1000">
+                                                            :open-delay="tooltipOpenDelay">
                                             <el-button style="margin-left: 0px;padding-left: 0px"
                                                        type="text"
                                                        size="mini"
@@ -48,8 +48,18 @@
                                                        @click="() => showUpdate(node, data)">
                                             </el-button>
                                                 </el-tooltip>
+                                            <el-tooltip effect="dark" content="授权报表" placement="top"
+                                                        :open-delay="tooltipOpenDelay">
+                                            <el-button style="margin-left: 0px;padding-left: 0px"
+                                                       type="text"
+                                                       size="mini"
+                                                       icon="el-icon-k-management"
+                                                       circle
+                                                       @click="() => showAuth(node, data)">
+                                            </el-button>
+                                            </el-tooltip>
                                                 <el-tooltip effect="dark" content="删除报表" placement="top"
-                                                            open-delay="1000">
+                                                            :open-delay="tooltipOpenDelay">
                                             <el-button style="margin-left: 0px;padding-left: 0px"
                                                        type="text"
                                                        size="mini"
@@ -86,25 +96,25 @@
                                 <hr class="split"/>
                                 <div class="card-context">
                                     <el-table :data="retList" border style="width: 100%" ref="retTable"
-                                              highlight-current-row height="400">
+                                              highlight-current-row height="200">
                                         <el-table-column prop="reportNumber" label="报表编号" width="120"></el-table-column>
-                                        <el-table-column prop="reportTitle" label="报表标题" width="150"></el-table-column>
+                                        <el-table-column prop="reportTitle" label="报表标题" width="300"></el-table-column>
                                         <el-table-column prop="createUserName" label="制表人"
-                                                         width="150"></el-table-column>
-                                        <el-table-column prop="createdTime_str" label="创建时间"
                                                          width="120"></el-table-column>
-                                        <el-table-column prop="state_str" label="状态" width="200"></el-table-column>
+                                        <el-table-column prop="createdTime_str" label="创建时间"
+                                                         width="160"></el-table-column>
+                                        <el-table-column prop="state_str" label="状态" width="80"></el-table-column>
                                         <el-table-column
-                                            fixed="right" label="操作" width="200">
+                                            fixed="right" label="操作" width="100">
                                             <template slot-scope="scope">
                                                 <el-tooltip effect="dark" content="下载" placement="top"
-                                                            open-delay="1000">
+                                                            :open-delay="tooltipOpenDelay">
                                                     <el-button @click="download(scope.row)" type="text"
                                                                icon="el-icon-k-download">
                                                     </el-button>
                                                 </el-tooltip>
                                                 <el-tooltip effect="dark" content="删除" placement="top"
-                                                            open-delay="1000">
+                                                            :open-delay="tooltipOpenDelay">
                                                     <el-button @click="deleteRecord(scope.row)" type="text"
                                                                icon="el-icon-delete">
                                                     </el-button>
@@ -115,8 +125,8 @@
                                     <div class="pagination">
                                         <el-pagination layout="total, sizes, prev, pager, next, jumper"
                                                        @size-change="handleSizeChange"
-                                                       @current-change="handleCurrentChange"
-                                                       :page-size="page.pageSize" :total="page.total"
+                                                       @current-change="handleCurrentChange" :page-size="page.pageSize"
+                                                       :total="page.total"
                                                        :page-count="page.pageCount"
                                                        :current-page="page.currentPage" :page-sizes="[10, 50, 100]">
                                         </el-pagination>
@@ -136,15 +146,20 @@
         <add-report :visible.sync="addFormVisible" @afterClose="refresh"></add-report>
         <update-report :visible.sync="updateFormVisible" :update-info="updateInitInfo"
                        @afterClose="refresh"></update-report>
+        <create-report :visible.sync="createFormVisible" :report-info="selectedReportInfo"
+                       @afterClose="refreshRecord"></create-report>
+        <auth-report :visible.sync="authFormVisible"></auth-report>
     </div>
 </template>
 
 <script>
-    import addReport from './AddReport'
-    import updateReport from './UpdateReport'
+    import AddReport from './AddReport'
+    import UpdateReport from './UpdateReport'
+    import CreateReport from './CreateReport'
+    import AuthReport from "./AuthReport"
 
     export default {
-        components: {addReport, updateReport},
+        components: {AddReport, UpdateReport, CreateReport, AuthReport},
         name: "reportMng",
         data() {
             return {
@@ -154,8 +169,7 @@
                     label: 'reportName'
                 },
                 filterText: '',
-                reportInfo: {},
-                selectedInfo: {},
+                selectedReportInfo: {},
                 retList: [],
                 page: {
                     pageSize: 10,
@@ -165,7 +179,10 @@
                 },
                 addFormVisible: false,
                 updateFormVisible: false,
-                updateInitInfo: {}
+                updateInitInfo: {},
+                tooltipOpenDelay: 1000,
+                createFormVisible: false,
+                authFormVisible: false
             }
         },
         created() {
@@ -179,10 +196,14 @@
         },
         methods: {
             init() {
-                this.selectedInfo = {}
+                this.selectedReportInfo = {}
             },
             refresh() {
+                this.init()
                 this.query()
+            },
+            refreshRecord() {
+                this.queryRecord()
             },
             query() {
                 let self = this
@@ -207,13 +228,40 @@
                 return data.reportName.indexOf(value) !== -1
             },
             selectOne(val) {
-                this.selectedInfo = val
+                this.selectedReportInfo = val
                 this.queryRecord()
             },
-            createReport(data) {
-
+            showAdd() {
+                this.addFormVisible = true
+            },
+            showCreate(node, data) {
+                this.selectedReportInfo = Object.assign({}, data)
+                this.createFormVisible = true
             },
             showUpdate(node, data) {
+                let json = JSON.parse(data.json)
+                this.updateInitInfo = {
+                    id: data.id,
+                    reportType: data.reportType,
+                    reportCode: data.reportCode,
+                    reportName: data.reportName,
+                    titleDateFlag: json.titleDate.flag,
+                    titleDateType: json.titleDate.type,
+                    title: json.title,
+                    reportNoFlag: json.reportNoFlag,
+                    createDateFlag: json.createDateFlag,
+                    createUserFlag: json.createUserFlag,
+                    seqFlag: json.seqFlag,
+                    columns: json.col,
+                    params: Object.assign([], data.reportParams),
+                    sql: data.sql
+                }
+                for (let i = 0; i < this.updateInitInfo.params.length; i++) {
+                    this.updateInitInfo.params[i].paramType_str = this.paramTypeStr(this.updateInitInfo.params[i].paramType)
+                }
+                this.updateFormVisible = true
+            },
+            showAuth(node, data) {
 
             },
             remove(node, data) {
@@ -231,7 +279,7 @@
             queryRecordPage() {
                 let self = this
                 var input = {
-                    recordId: self.selectedInfo.id
+                    reportId: self.selectedReportInfo.id
                 }
                 input.currentPage = self.page.currentPage
                 input.pageSize = self.page.pageSize
@@ -275,8 +323,20 @@
             deleteRecord(row) {
 
             },
-            showAdd() {
-                this.addFormVisible = true
+            paramTypeStr(paramType) {
+                let paramTypeStr = ''
+                if (paramType == 1) {
+                    paramTypeStr = '文本框'
+                } else if (paramType == 2) {
+                    paramTypeStr = '文本域'
+                } else if (paramType == 3) {
+                    paramTypeStr = '日期'
+                } else if (paramType == 4) {
+                    paramTypeStr = '单选框'
+                } else if (paramType == 5) {
+                    paramTypeStr = '复选框'
+                }
+                return paramTypeStr
             },
             stateStr(state) {
                 let stateStr = ''
@@ -285,7 +345,7 @@
                 } else if (state == 2) {
                     stateStr = '关闭'
                 }
-                return stateStr;
+                return stateStr
             }
         }
     }

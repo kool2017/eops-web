@@ -23,7 +23,7 @@
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="sql:" prop="sql" label-width="130px">
-                                        <el-input v-model="addInfo.sql" size="small" maxlength="100"></el-input>
+                                        <el-input type="textarea" v-model="addInfo.sql"></el-input>
                                     </el-form-item>
                                     <el-form-item label="是否展示标题日期:" prop="titleDateFlag" label-width="130px">
                                         <el-select v-model="addInfo.titleDateFlag" size="small" clearable
@@ -86,7 +86,7 @@
                                         <el-table-column fixed="right" label="操作" width="100">
                                             <template slot-scope="scope">
                                                 <el-tooltip effect="dark" content="删除" placement="top"
-                                                            open-delay=1000>
+                                                            :open-delay="tooltipOpenDelay">
                                                     <el-button type="text" icon="el-icon-remove-outline"
                                                                @click="deleteColumn(scope.$index, scope.row)">
                                                     </el-button>
@@ -111,7 +111,7 @@
                                         <el-table-column fixed="right" label="操作" width="100">
                                             <template slot-scope="scope">
                                                 <el-tooltip effect="dark" content="删除" placement="top"
-                                                            open-delay=1000>
+                                                            :open-delay="tooltipOpenDelay">
                                                     <el-button type="text" icon="el-icon-remove-outline"
                                                                @click="deleteParam(scope.$index, scope.row)">
                                                     </el-button>
@@ -151,7 +151,7 @@
 
     export default {
         components: {addColumn, addParam, reportForm, reportTable},
-        name: "Add",
+        name: "AddReport",
         props: {
             visible: {
                 type: Boolean,
@@ -161,13 +161,23 @@
         data() {
             return {
                 addInfo: {
-                    reportType: null
+                    reportType: null,
+                    reportCode: null,
+                    reportName: null,
+                    titleDateFlag: null,
+                    titleDateType: null,
+                    title: null,
+                    reportNoFlag: null,
+                    createDateFlag: null,
+                    createUserFlag: null,
+                    seqFlag: null,
                 },
                 addRules: {},
                 columns: [],
                 addColumnFormVisible: false,
                 params: [],
-                addParamFormVisible: false
+                addParamFormVisible: false,
+                tooltipOpenDelay: 1000
             }
         },
         methods: {
@@ -180,14 +190,33 @@
                 if (validRet == false) {
                     return
                 }
-                let input = self.addInfo
-                input.columnMeta = self.columnMeta
+                let json = {
+                    reportType: self.addInfo.reportType,
+                    titleDate: {
+                        flag: self.addInfo.titleDateFlag,
+                        type: self.addInfo.titleDateType
+                    },
+                    title: self.addInfo.title,
+                    reportNoFlag: self.addInfo.reportNoFlag,
+                    createDateFlag: self.addInfo.createDateFlag,
+                    createUserFlag: self.addInfo.createUserFlag,
+                    seqFlag: self.addInfo.seqFlag,
+                    col: self.columns
+                }
+                let input = {
+                    reportCode: self.addInfo.reportCode,
+                    reportName: self.addInfo.reportName,
+                    reportType: self.addInfo.reportType,
+                    sql: self.addInfo.sql,
+                    json: JSON.stringify(json),
+                    reportParams: self.params
+                }
                 self.$http
-                    .post('/eops/df/meta/add', input)
+                    .post('/eops/bi/report/add', input)
                     .then((res) => {
                         self.modalClose()
                         self.$message({
-                            message: '增加信息成功',
+                            message: '增加报表成功',
                             type: 'success'
                         })
                     })
@@ -215,11 +244,27 @@
             },
             addParam(val) {
                 if (val != null) {
+                    val.paramType_str = this.paramTypeStr(val.paramType)
                     this.params.push(val)
                 }
             },
             deleteParam(index, row) {
                 this.params.splice(index, 1)
+            },
+            paramTypeStr(paramType) {
+                let paramTypeStr = ''
+                if (paramType == 1) {
+                    paramTypeStr = '文本框'
+                } else if (paramType == 2) {
+                    paramTypeStr = '文本域'
+                } else if (paramType == 3) {
+                    paramTypeStr = '日期'
+                } else if (paramType == 4) {
+                    paramTypeStr = '单选框'
+                } else if (paramType == 5) {
+                    paramTypeStr = '复选框'
+                }
+                return paramTypeStr
             },
             modalClose() {
                 let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))

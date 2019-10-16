@@ -80,7 +80,7 @@
                                     <el-table-column prop="comment" label="注释" width="300"></el-table-column>
                                     <el-table-column fixed="right" label="操作" width="100">
                                         <template slot-scope="scope">
-                                            <el-tooltip effect="dark" content="删除" placement="top" open-delay=1000>
+                                            <el-tooltip effect="dark" content="删除" placement="top" :open-delay="tooltipOpenDelay">
                                                 <el-button type="text" icon="el-icon-remove-outline"
                                                            @click="del(scope.$index, scope.row)">
                                                 </el-button>
@@ -149,7 +149,8 @@
                 columnInfo: {},
                 columnRules: {},
                 allAppid: [],
-                timeout: null
+                timeout: null,
+                tooltipOpenDelay:1000
             }
         },
         methods: {
