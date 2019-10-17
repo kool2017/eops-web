@@ -2,7 +2,7 @@
     <el-dialog title="授权报表" :visible.sync="visible" :close-on-click-modal="false"
                :before-close="modalClose">
         <el-card>
-            <el-transfer v-model="authInfo.authUsers" :data="authInfo.allUsers" :titles="['无权限用户','有权限用户']"
+            <el-transfer v-model="authInfo.userAuthBit" :data="authInfo.allUsersBit" :titles="['无权限用户','有权限用户']"
                          :props="authTransferProps">
 
             </el-transfer>
@@ -24,8 +24,8 @@
             },
             authInfo: {
                 reportId: null,
-                authUsers: null,
-                allUsers: null
+                userAuthBit: [],
+                allUsersBit: []
             }
         },
         data() {
@@ -39,16 +39,27 @@
         methods: {
             auth() {
                 const self = this
+                let userAuthBit = []
+                for(let i = 0; i< self.authInfo.userAuthBit.length;i++){
+                    const userBitKey = self.authInfo.userAuthBit[i]
+                    let userBit = userBitKey.split('_')
+                    let item = {
+                        userId : userBit[0],
+                        code : userBit[1]
+                    }
+                    userAuthBit.push(item)
+                }
+
                 let input = {
                     reportId: self.authInfo.reportId,
                     userAuthBit: userAuthBit
                 }
                 self.$http
-                    .post('/eops/aut/bind_menu_aut', input)
+                    .post('/eops/bi/report/auth', input)
                     .then((res) => {
                         self.modalClose()
                         self.$message({
-                            message: '绑定菜单成功',
+                            message: '报表授权成功',
                             type: 'success'
                         })
                     })
@@ -61,8 +72,8 @@
                     })
             },
             modalClose() {
-                this.authInfo.authUsers = []
-                this.authInfo.allUsers = []
+                this.authInfo.userAuthBit = []
+                this.authInfo.allUsersBit = []
                 this.$emit('update:visible', false)
             }
         }

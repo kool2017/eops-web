@@ -107,13 +107,13 @@
                                         <el-table-column
                                             fixed="right" label="操作" width="100">
                                             <template slot-scope="scope">
-                                                <el-tooltip effect="dark" content="下载" placement="top"
+                                                <el-tooltip v-if="scope.row.state === 1" effect="dark" content="下载" placement="top"
                                                             :open-delay="tooltipOpenDelay">
                                                     <el-button @click="download(scope.row)" type="text"
                                                                icon="el-icon-k-download">
                                                     </el-button>
                                                 </el-tooltip>
-                                                <el-tooltip effect="dark" content="删除" placement="top"
+                                                <el-tooltip v-if="scope.row.state === 1" effect="dark" content="删除" placement="top"
                                                             :open-delay="tooltipOpenDelay">
                                                     <el-button @click="deleteRecord(scope.row)" type="text"
                                                                icon="el-icon-delete">
@@ -148,7 +148,7 @@
                        @afterClose="refresh"></update-report>
         <create-report :visible.sync="createFormVisible" :report-info="selectedReportInfo"
                        @afterClose="refreshRecord"></create-report>
-        <auth-report :visible.sync="authFormVisible"></auth-report>
+        <auth-report :visible.sync="authFormVisible" :auth-info="authInfo"></auth-report>
     </div>
 </template>
 
@@ -182,7 +182,12 @@
                 updateInitInfo: {},
                 tooltipOpenDelay: 1000,
                 createFormVisible: false,
-                authFormVisible: false
+                authFormVisible: false,
+                authInfo: {
+                    reportId: null,
+                    userAuthBit: [],
+                    allUsersBit: []
+                }
             }
         },
         created() {
@@ -262,10 +267,90 @@
                 this.updateFormVisible = true
             },
             showAuth(node, data) {
+                this.authInfo.reportId = data.id
+                this.queryAllUsersWithAuth(data.id)
+                this.queryAuthUsersWithAuth(data.id)
+                this.authFormVisible = true
+            },
+            queryAllUsersWithAuth(reportId) {
+                let self = this
+                let input = {
+                    reportId: reportId
+                }
+                self.$http
+                    .post('/eops/bi/report/getAllUsersWithAuth', input)
+                    .then(function (response) {
+                        let pkgOut = response.data
+                        let allUsersBit = pkgOut.data
+                        for (let i = 0; i < allUsersBit.length; i++) {
+                            allUsersBit[i].userBitKey = allUsersBit[i].userId + '_' + allUsersBit[i].code
+                            allUsersBit[i].userBitName = allUsersBit[i].userName + '-' + allUsersBit[i].desc
+                        }
+                        self.authInfo.allUsersBit = allUsersBit
 
+                        console.log(allUsersBit)
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
+            },
+            queryAuthUsersWithAuth(reportId) {
+                let self = this
+                let input = {
+                    reportId: reportId
+                }
+                self.$http
+                    .post('/eops/bi/report/getAuthUsersWithAuth', input)
+                    .then(function (response) {
+                        let pkgOut = response.data
+                        let result = pkgOut.data
+                        for (let i = 0; i < result.length; i++) {
+                            const userBitKey = result[i].userId + '_' + result[i].code
+                            self.authInfo.userAuthBit.push(userBitKey)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
             },
             remove(node, data) {
-
+                let self = this
+                self.$confirm('是否删除报表[' + data.reportName + ']?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'info'
+                }).then(() => {
+                    let input = {
+                        id: data.id,
+                        reportCode: data.reportCode
+                    }
+                    self.$http
+                        .post('/eops/bi/report/delete', input)
+                        .then((res) => {
+                            self.init()
+                            self.query()
+                            self.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            self.$alert(err, '提示', {
+                                confirmButtonText: '确定',
+                                type: 'error'
+                            })
+                        })
+                }).catch((erro) => {
+                })
             },
             queryRecord() {
                 this.page = {
@@ -317,11 +402,38 @@
                 self.page.currentPage = currentPage
                 self.queryRecordPage()
             },
-            download(row) {
-
+            download(val) {
+                 window.open(process.env.BASE_URL+ '/eops/bi/report/download?id=' + val.id, '_blank')
             },
-            deleteRecord(row) {
-
+            deleteRecord(val) {
+                let self = this
+                self.$confirm('是否删除报表记录[' + val.reportNumber + ']?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'info'
+                }).then(() => {
+                    let input = {
+                        id: val.id
+                    }
+                    self.$http
+                        .post('/eops/bi/report/deleteGenerateRecord', input)
+                        .then((res) => {
+                            self.init()
+                            self.query()
+                            self.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            self.$alert(err, '提示', {
+                                confirmButtonText: '确定',
+                                type: 'error'
+                            })
+                        })
+                }).catch((erro) => {
+                })
             },
             paramTypeStr(paramType) {
                 let paramTypeStr = ''
@@ -341,9 +453,11 @@
             stateStr(state) {
                 let stateStr = ''
                 if (state == 1) {
-                    stateStr = '正常'
+                    stateStr = '已生成'
                 } else if (state == 2) {
-                    stateStr = '关闭'
+                    stateStr = '已删除'
+                } else if (state == 3) {
+                    stateStr = '生成中'
                 }
                 return stateStr
             }
