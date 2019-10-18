@@ -13,7 +13,7 @@
                                 <el-input v-model="addInfo.name" size="small" maxlength="100"></el-input>
                             </el-form-item>
                             <el-form-item label="字段定义:" prop="key">
-                                <el-input v-model="addInfo.key" size="small"></el-input>
+                                <el-input v-model="addInfo.key" size="small" @keyup.enter.native="addColumn"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
