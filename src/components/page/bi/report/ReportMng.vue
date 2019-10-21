@@ -85,6 +85,12 @@
                                 <span><i class="el-icon-view"></i>报表信息:</span>
                                 <hr class="split"/>
                                 <div class="card-context">
+                                    <div v-if="selectedReportInfo.reportType == 1">
+                                        <report-table :report-info="selectedReportInfo" :columns="columns"></report-table>
+                                    </div>
+                                    <div v-else-if="selectedReportInfo.reportType == 2">
+                                        <report-form :report-info="selectedReportInfo" :columns="columns"></report-form>
+                                    </div>
                                 </div>
                             </el-card>
                         </el-col>
