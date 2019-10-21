@@ -86,10 +86,12 @@
                                 <hr class="split"/>
                                 <div class="card-context">
                                     <div v-if="selectedReportInfo.reportType == 1">
-                                        <report-table :report-info="selectedReportInfo" :columns="columns"></report-table>
+                                        <report-table :report-info="selectedReportInfo"
+                                                      :columns="selectedReportInfo.columns"></report-table>
                                     </div>
                                     <div v-else-if="selectedReportInfo.reportType == 2">
-                                        <report-form :report-info="selectedReportInfo" :columns="columns"></report-form>
+                                        <report-form :report-info="selectedReportInfo"
+                                                     :columns="selectedReportInfo.columns"></report-form>
                                     </div>
                                 </div>
                             </el-card>
@@ -113,13 +115,15 @@
                                         <el-table-column
                                             fixed="right" label="操作" width="100">
                                             <template slot-scope="scope">
-                                                <el-tooltip v-if="scope.row.state === 1" effect="dark" content="下载" placement="top"
+                                                <el-tooltip v-if="scope.row.state === 1" effect="dark" content="下载"
+                                                            placement="top"
                                                             :open-delay="tooltipOpenDelay">
                                                     <el-button @click="download(scope.row)" type="text"
                                                                icon="el-icon-k-download">
                                                     </el-button>
                                                 </el-tooltip>
-                                                <el-tooltip v-if="scope.row.state === 1" effect="dark" content="删除" placement="top"
+                                                <el-tooltip v-if="scope.row.state === 1" effect="dark" content="删除"
+                                                            placement="top"
                                                             :open-delay="tooltipOpenDelay">
                                                     <el-button @click="deleteRecord(scope.row)" type="text"
                                                                icon="el-icon-delete">
@@ -163,9 +167,11 @@
     import UpdateReport from './UpdateReport'
     import CreateReport from './CreateReport'
     import AuthReport from "./AuthReport"
+    import reportForm from "./ReportForm"
+    import reportTable from "./ReportTable"
 
     export default {
-        components: {AddReport, UpdateReport, CreateReport, AuthReport},
+        components: {AddReport, UpdateReport, CreateReport, AuthReport, reportForm, reportTable},
         name: "reportMng",
         data() {
             return {
@@ -240,6 +246,8 @@
             },
             selectOne(val) {
                 this.selectedReportInfo = val
+                let columns = this.selectedReportInfo.json.col
+                this.selectedReportInfo.columns = columns
                 this.queryRecord()
             },
             showAdd() {
@@ -409,7 +417,7 @@
                 self.queryRecordPage()
             },
             download(val) {
-                 window.open(process.env.BASE_URL+ '/eops/bi/report/download?id=' + val.id, '_blank')
+                window.open(process.env.BASE_URL + '/eops/bi/report/download?id=' + val.id, '_blank')
             },
             deleteRecord(val) {
                 let self = this

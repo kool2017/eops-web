@@ -146,8 +146,8 @@
 <script>
     import addColumn from './AddColumn'
     import addParam from './AddParam'
-    import reportForm from "./ReportForm";
-    import reportTable from "./ReportTable";
+    import reportForm from "./ReportForm"
+    import reportTable from "./ReportTable"
 
     export default {
         components: {addColumn, addParam, reportForm, reportTable},
