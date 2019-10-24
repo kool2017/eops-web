@@ -2,7 +2,35 @@
     <div class="header">
         <div class="logo">{{appName}}</div>
         <div class="user-info">
-            <el-dropdown trigger="click" @command="handleCommand">
+            <span v-if="notifySize > 0" style="line-height:17px;margin-right: 20px">
+            <el-badge :value="notifySize" style="line-height:17px">
+            <el-popover
+                placement="bottom-end"
+                width="300"
+                trigger="hover">
+                <div class="notify-title">通知消息
+                    <el-button icon="el-icon-refresh" type="text" style="margin-left: 5px" @click="refreshMsg"></el-button>
+                    <el-button type="text" style="margin-left: 140px" @click="readAll">全部已读</el-button></div>
+                <hr class="split"/>
+                <div v-for="content in unreadNotify">
+                    <div class="unread-msg">{{content}}<el-button type="text" size="mini" style=""></el-button></div>
+                </div>
+              <el-button slot="reference" type="primary" size="medium" icon="el-icon-bell" circle></el-button>
+            </el-popover>
+            </el-badge>
+          </span>
+            <span v-else style="line-height:17px;margin-right: 20px">
+            <el-popover
+                placement="bottom-end"
+                width="200"
+                trigger="hover">
+                <div class="notify-title">通知消息<el-button icon="el-icon-refresh" type="text" style="margin-left: 50px"
+                                                         @click="refreshMsg"></el-button></div>
+                <hr class="split"/>
+            <el-button slot="reference" type="primary" size="medium" icon="el-icon-bell" circle></el-button>
+            </el-popover>
+          </span>
+            <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
                     <img class="user-logo" :src="avatar"> {{loginName}}
                 </span>
@@ -39,7 +67,8 @@
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="密码错误次数:">
-                                        <el-input v-model="viewInfo.userDtl.errorTimes" size="small" readonly></el-input>
+                                        <el-input v-model="viewInfo.userDtl.errorTimes" size="small"
+                                                  readonly></el-input>
                                     </el-form-item>
                                     <el-form-item label="邮箱:">
                                         <el-input v-model="viewInfo.userDtl.email" size="small" readonly></el-input>
@@ -89,6 +118,10 @@
     import {Base64} from 'js-base64'
 
     export default {
+        props: {
+            unreadNotify: null,
+            notifySize: 0
+        },
         data() {
             return {
                 appName: '',
@@ -191,6 +224,29 @@
                             type: 'error'
                         })
                     })
+            },
+            refreshMsg() {
+                this.$emit('refreshMsg')
+            },
+            readAll(){
+                const self = this
+                let input = {}
+                self.$http
+                    .post('/eops/sys/notify/setAllRead', input)
+                    .then(function (res) {
+                        self.$message({
+                            message: '所有未读消息更新为已读状态',
+                            type: 'success'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
+                this.$emit('refreshMsg')
             }
         }
     }
@@ -239,5 +295,12 @@
 
     .el-dropdown-menu__item {
         text-align: center;
+    }
+
+    .unread-msg {
+        width: 400px;
+        line-height: 15px;
+        font-size: 10px;
+        font-weight: bold;
     }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <v-head></v-head>
+        <v-head :unread-notify="unreadNotify" :notify-size="notifySize" @refreshMsg="getUnRead"></v-head>
         <v-sidebar @transferCrumb="getCrumb"></v-sidebar>
         <v-crumb :crumbs="crumbs"></v-crumb>
         <div class="content">
@@ -9,6 +9,20 @@
             </transition>
         </div>
 
+        <!--<el-row >-->
+        <!--<el-col span="2">-->
+        <!--<el-input v-model="text"></el-input>-->
+
+        <!--</el-col>-->
+        <!--<el-col span="2">-->
+        <!--<el-input type="textarea" v-model="data"></el-input>-->
+
+        <!--</el-col>-->
+        <!--<el-col span="2">-->
+        <!--<el-button @click="send">发送</el-button>-->
+
+        <!--</el-col>-->
+        <!--</el-row>-->
         <!--<div class="bottom">-->
         <!--<div style="width:300px;margin:0 auto; padding:20px 0;">-->
         <!--<a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010602009770" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="../../../static/img/beian.png" style="float:left;" />-->
@@ -32,7 +46,10 @@
                 crumbs: [],
                 text: '',
                 data: '',
-                websocket: null
+                websocket: null,
+                timer: null,
+                unreadNotify: [],
+                notifySize: 0
             }
         },
         mounted() {
@@ -45,6 +62,7 @@
         },
         beforeDestroy() {
             this.onbeforeunload()
+            clearInterval(this.timer);
         },
         methods: {
             getCrumb(msg) {
@@ -73,17 +91,27 @@
             setOnopenMessage() {
                 this.data = "WebSocket连接成功" + '   状态码：' + this.websocket.readyState;
                 console.log("WebSocket连接成功" + '   状态码：' + this.websocket.readyState)
+                this.timer = setInterval(this.sendAlive, 55000);
+                //查询未读消息和未读消息数
+                this.getUnRead()
             },
             setOnmessageMessage(event) {
                 let self = this
-                self.data = '服务端返回：' + event.data
                 console.log('服务端返回：' + event.data)
+                let msg = JSON.parse(event.data)
                 self.$notify({
                     title: '通知',
-                    message: self.data,
+                    message: msg.content,
                     duration: 3000,
                     position: 'bottom-right'
                 })
+                if (msg.msgType) {
+                    self.unreadNotify.splice(0, 0, msg.content)
+                    if (self.unreadNotify.length > 5) {
+                        self.unreadNotify.splice(5, self.unreadNotify.length - 5)
+                    }
+                    self.notifySize = self.notifySize + 1;
+                }
             },
             setOncloseMessage() {
                 this.data = "WebSocket连接关闭" + '   状态码：' + this.websocket.readyState;
@@ -95,12 +123,40 @@
             },
 
             //websocket发送消息
-            send() {
-                this.websocket.send(this.text)
-                this.text = ''
+            send(text) {
+                this.websocket.send(text)
+            },
+            sendAlive() {
+                this.send('0')
             },
             closeWebSocket() {
                 this.websocket.close()
+            },
+            getUnRead() {
+                let self = this
+                let input = {
+                    state: 0,
+                    currentPage: 1,
+                    pageSize: 5
+                }
+                self.$http
+                    .post('/eops/sys/notify/getMyNotifyPage', input)
+                    .then(function (response) {
+                        let pkgOut = response.data
+                        let notifyList = pkgOut.data
+                        self.unreadNotify = []
+                        for (let i = 0; i < notifyList.length; i++) {
+                            self.unreadNotify.push(notifyList[i].content)
+                        }
+                        self.notifySize = pkgOut.total
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
             }
         },
         components: {
