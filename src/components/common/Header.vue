@@ -2,34 +2,30 @@
     <div class="header">
         <div class="logo">{{appName}}</div>
         <div class="user-info">
-            <span v-if="notifySize > 0" style="line-height:17px;margin-right: 20px">
-            <el-badge :value="notifySize" style="line-height:17px">
             <el-popover
                 placement="bottom-end"
                 width="300"
                 trigger="hover">
                 <div class="notify-title">通知消息
-                    <el-button icon="el-icon-refresh" type="text" style="margin-left: 5px" @click="refreshMsg"></el-button>
-                    <el-button type="text" style="margin-left: 140px" @click="readAll">全部已读</el-button></div>
-                <hr class="split"/>
-                <div v-for="content in unreadNotify">
-                    <div class="unread-msg">{{content}}<el-button type="text" size="mini" style=""></el-button></div>
+                    <el-button icon="el-icon-refresh" type="text" style="margin-left: 5px"
+                               @click="refreshMsg"></el-button>
+                    <el-button :disabled="notifySize === 0" type="text" style="margin-left: 140px" @click="readAll">全部已读</el-button>
                 </div>
-              <el-button slot="reference" type="primary" size="medium" icon="el-icon-bell" circle></el-button>
-            </el-popover>
-            </el-badge>
-          </span>
-            <span v-else style="line-height:17px;margin-right: 20px">
-            <el-popover
-                placement="bottom-end"
-                width="200"
-                trigger="hover">
-                <div class="notify-title">通知消息<el-button icon="el-icon-refresh" type="text" style="margin-left: 50px"
-                                                         @click="refreshMsg"></el-button></div>
                 <hr class="split"/>
-            <el-button slot="reference" type="primary" size="medium" icon="el-icon-bell" circle></el-button>
+                <div v-for="item in unreadNotify">
+                    <div>
+                        <el-button class="unread-msg" type="text"
+                                   @click="read(item.id)">{{item.content}}
+                        </el-button>
+                    </div>
+                </div>
+                <span style="line-height:17px;margin-right: 20px" slot="reference">
+                <el-badge v-if="notifySize > 0" :value="notifySize" style="line-height:17px">
+                    <el-button type="primary" size="medium" icon="el-icon-bell" circle></el-button>
+                </el-badge>
+                    <el-button v-else type="primary" size="medium" icon="el-icon-bell" circle></el-button>
+            </span>
             </el-popover>
-          </span>
             <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
                     <img class="user-logo" :src="avatar"> {{loginName}}
@@ -228,7 +224,29 @@
             refreshMsg() {
                 this.$emit('refreshMsg')
             },
-            readAll(){
+            read(id) {
+                const self = this
+                let input = {
+                    id: id
+                }
+                self.$http
+                    .post('/eops/sys/notify/setOneRead', input)
+                    .then(function (res) {
+                        self.$message({
+                            message: '未读消息更新为已读状态',
+                            type: 'success'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        self.$alert(err, '提示', {
+                            confirmButtonText: '确定',
+                            type: 'error'
+                        })
+                    })
+                this.$emit('refreshMsg')
+            },
+            readAll() {
                 const self = this
                 let input = {}
                 self.$http
@@ -298,9 +316,9 @@
     }
 
     .unread-msg {
-        width: 400px;
         line-height: 15px;
         font-size: 10px;
         font-weight: bold;
+        height: 15px;
     }
 </style>

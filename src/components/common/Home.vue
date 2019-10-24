@@ -106,7 +106,7 @@
                     position: 'bottom-right'
                 })
                 if (msg.msgType) {
-                    self.unreadNotify.splice(0, 0, msg.content)
+                    self.unreadNotify.splice(0, 0, msg)
                     if (self.unreadNotify.length > 5) {
                         self.unreadNotify.splice(5, self.unreadNotify.length - 5)
                     }
@@ -143,11 +143,7 @@
                     .post('/eops/sys/notify/getMyNotifyPage', input)
                     .then(function (response) {
                         let pkgOut = response.data
-                        let notifyList = pkgOut.data
-                        self.unreadNotify = []
-                        for (let i = 0; i < notifyList.length; i++) {
-                            self.unreadNotify.push(notifyList[i].content)
-                        }
+                        self.unreadNotify = pkgOut.data
                         self.notifySize = pkgOut.total
                     })
                     .catch(function (err) {
