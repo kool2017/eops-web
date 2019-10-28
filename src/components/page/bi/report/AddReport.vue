@@ -122,11 +122,22 @@
                                 </div>
                             </el-col>
                             <el-col :span="12">
-                                <div v-if="addInfo.reportType == 1">
-                                    <report-table :report-info="addInfo" :columns="columns"></report-table>
+                                <div v-if="addInfo.reportType == '1'">
+                                    <report-table :title-date-flag="addInfo.titleDateFlag"
+                                                  :title="addInfo.title"
+                                                  :report-no-flag="addInfo.reportNoFlag"
+                                                  :create-date-flag="addInfo.createDateFlag"
+                                                  :create-user-flag="addInfo.createUserFlag"
+                                                  :seq-flag="addInfo.seqFlag"
+                                                  :columns="columns"></report-table>
                                 </div>
-                                <div v-else-if="addInfo.reportType == 2">
-                                    <report-form :report-info="addInfo" :columns="columns"></report-form>
+                                <div v-else-if="addInfo.reportType == '2'">
+                                    <report-form :title-date-flag="addInfo.titleDateFlag"
+                                                 :title="addInfo.title"
+                                                 :report-no-flag="addInfo.reportNoFlag"
+                                                 :create-date-flag="addInfo.createDateFlag"
+                                                 :create-user-flag="addInfo.createUserFlag"
+                                                 :columns="columns"></report-form>
                                 </div>
                             </el-col>
                         </el-row>
@@ -164,13 +175,19 @@
                     reportType: null,
                     reportCode: null,
                     reportName: null,
-                    titleDateFlag: null,
-                    titleDateType: null,
+                    titleDateFlag: '1',
+                    titleDateType: '1',
                     title: null,
-                    reportNoFlag: null,
-                    createDateFlag: null,
-                    createUserFlag: null,
-                    seqFlag: null,
+                    reportNoFlag: '1',
+                    createDateFlag: '1',
+                    createUserFlag: '1',
+                    seqFlag: '1',
+                    json: {
+                        titleDate: {
+                            flag: '1',
+                            type: null
+                        }
+                    }
                 },
                 addRules: {},
                 columns: [],
@@ -268,7 +285,25 @@
             },
             modalClose() {
                 let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))
-                this.addInfo = {}
+                this.addInfo = {
+                    reportType: null,
+                    reportCode: null,
+                    reportName: null,
+                    titleDateFlag: '1',
+                    titleDateType: '1',
+                    title: null,
+                    reportNoFlag: '1',
+                    createDateFlag: '1',
+                    createUserFlag: '1',
+                    seqFlag: '1',
+                    json: {
+                        titleDate: {
+                            flag: '1',
+                            type: null
+                        }
+                    }}
+                this.columns = []
+                this.params = []
                 this.$emit('afterClose', afterAddInfo)
                 this.$emit('update:visible', false);
             }

@@ -85,12 +85,21 @@
                                 <span><i class="el-icon-view"></i>报表信息:</span>
                                 <hr class="split"/>
                                 <div class="card-context">
-                                    <div v-if="selectedReportInfo.reportType == 1">
-                                        <report-table :report-info="selectedReportInfo"
+                                    <div v-if="selectedReportInfo.reportType == '1'">
+                                        <report-table :title-date-flag="selectedReportInfo.titleDateFlag"
+                                                      :title="selectedReportInfo.title"
+                                                      :report-no-flag="selectedReportInfo.reportNoFlag"
+                                                      :create-date-flag="selectedReportInfo.createDateFlag"
+                                                      :create-user-flag="selectedReportInfo.createUserFlag"
+                                                      :seq-flag="selectedReportInfo.seqFlag"
                                                       :columns="selectedReportInfo.columns"></report-table>
                                     </div>
-                                    <div v-else-if="selectedReportInfo.reportType == 2">
-                                        <report-form :report-info="selectedReportInfo"
+                                    <div v-else-if="selectedReportInfo.reportType == '2'">
+                                        <report-form :title-date-flag="selectedReportInfo.titleDateFlag"
+                                                     :title="selectedReportInfo.title"
+                                                     :report-no-flag="selectedReportInfo.reportNoFlag"
+                                                     :create-date-flag="selectedReportInfo.createDateFlag"
+                                                     :create-user-flag="selectedReportInfo.createUserFlag"
                                                      :columns="selectedReportInfo.columns"></report-form>
                                     </div>
                                 </div>
@@ -246,8 +255,15 @@
             },
             selectOne(val) {
                 this.selectedReportInfo = val
-                let columns = this.selectedReportInfo.json.col
+                this.selectedReportInfo.reportType = val.reportType.toString()
+                const json = JSON.parse(this.selectedReportInfo.json)
+                const columns = json.col
                 this.selectedReportInfo.columns = columns
+                this.selectedReportInfo.titleDateFlag = json.titleDate.flag
+                this.selectedReportInfo.reportNoFlag = json.reportNoFlag
+                this.selectedReportInfo.createDateFlag = json.createDateFlag
+                this.selectedReportInfo.createUserFlag = json.createUserFlag
+                this.selectedReportInfo.seqFlag = json.seqFlag
                 this.queryRecord()
             },
             showAdd() {
@@ -261,7 +277,7 @@
                 let json = JSON.parse(data.json)
                 this.updateInitInfo = {
                     id: data.id,
-                    reportType: data.reportType,
+                    reportType: data.reportType.toString(),
                     reportCode: data.reportCode,
                     reportName: data.reportName,
                     titleDateFlag: json.titleDate.flag,

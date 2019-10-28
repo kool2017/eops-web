@@ -30,13 +30,15 @@
                                 生效日期起:
                             </el-col>
                             <el-col :span="4">
-                                <el-date-picker v-model="condition.enableDateFrom" type="date" placeholder="选择日期" size="small"></el-date-picker>
+                                <el-date-picker v-model="condition.enableDateFrom" type="date" placeholder="选择日期"
+                                                size="small"></el-date-picker>
                             </el-col>
                             <el-col :span="2">
                                 生效日期止:
                             </el-col>
                             <el-col :span="4">
-                                <el-date-picker v-model="condition.enableDateTo" type="date" placeholder="选择日期" size="small"></el-date-picker>
+                                <el-date-picker v-model="condition.enableDateTo" type="date" placeholder="选择日期"
+                                                size="small"></el-date-picker>
                             </el-col>
                         </el-row>
                     </div>
@@ -90,9 +92,10 @@
 <script>
     import addApp from './Add'
     import updateApp from './Update'
+    import {getUnitsDesc, getCostModeDesc} from '../../../../enum/cs/CsEnum'
 
     export default {
-        name:"CatalogMng",
+        name: "CatalogMng",
         components: {addApp, updateApp},
         data() {
             return {
@@ -232,26 +235,10 @@
                 })
             },
             unitsStr(units) {
-                let unitsStr = ''
-                if (units == 1) {
-                    unitsStr = '次'
-                } else if (units == 2) {
-                    unitsStr = '秒'
-                } else if (units == 3) {
-                    unitsStr = '十次'
-                } else if (units == 4) {
-                    unitsStr = '百次'
-                }
-                return unitsStr;
+                return getUnitsDesc(units);
             },
             costModeStr(costMode) {
-                let costModeStr = ''
-                if (costMode == 1) {
-                    costModeStr = '按次计费'
-                } else if (costMode == 2) {
-                    costModeStr = '按时长计费'
-                }
-                return costModeStr;
+                return getCostModeDesc(costMode);
             }
         }
     }

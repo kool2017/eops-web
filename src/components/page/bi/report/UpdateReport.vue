@@ -125,11 +125,22 @@
                                 </div>
                             </el-col>
                             <el-col :span="12">
-                                <div v-if="updateInfo.reportType == 1">
-                                    <report-table :report-info="updateInfo" :columns="updateInfo.columns"></report-table>
+                                <div v-if="updateInfo.reportType == '1'">
+                                    <report-table :title-date-flag="updateInfo.titleDateFlag"
+                                                  :title="updateInfo.title"
+                                                  :report-no-flag="updateInfo.reportNoFlag"
+                                                  :create-date-flag="updateInfo.createDateFlag"
+                                                  :create-user-flag="updateInfo.createUserFlag"
+                                                  :seq-flag="updateInfo.seqFlag"
+                                                  :columns="updateInfo.columns"></report-table>
                                 </div>
-                                <div v-else-if="updateInfo.reportType == 2">
-                                    <report-form :report-info="updateInfo" :columns="updateInfo.columns"></report-form>
+                                <div v-else-if="updateInfo.reportType == '2'">
+                                    <report-form :title-date-flag="updateInfo.titleDateFlag"
+                                                 :title="updateInfo.title"
+                                                 :report-no-flag="updateInfo.reportNoFlag"
+                                                 :create-date-flag="updateInfo.createDateFlag"
+                                                 :create-user-flag="updateInfo.createUserFlag"
+                                                 :columns="updateInfo.columns"></report-form>
                                 </div>
                             </el-col>
                         </el-row>

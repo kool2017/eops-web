@@ -10,8 +10,8 @@
                         <el-col :span="20">
                             <el-form-item label="计量单位:" prop="units">
                                 <el-select v-model="updateInfo.units" size="small" clearable>
-                                    <el-option label="1-次" value="1"></el-option>
-                                    <el-option label="2-秒" value="2"></el-option>
+                                    <el-option v-for="item in unitsEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="单价:" prop="price">
@@ -19,8 +19,8 @@
                             </el-form-item>
                             <el-form-item label="计费模式:" prop="costMode">
                                 <el-select v-model="updateInfo.costMode" size="small" clearable>
-                                    <el-option label="1-按次计费" value="1"></el-option>
-                                    <el-option label="2-按时长计费" value="2"></el-option>
+                                    <el-option v-for="item in costModeEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="生效时间:" prop="enableTime">
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+    import {getUnitsEnum, getCostModeEnum} from '../../../../enum/cs/CsEnum'
+
     export default {
         name: "Update",
         props: {
@@ -55,6 +57,8 @@
         },
         data() {
             return {
+                unitsEnum: getUnitsEnum(),
+                costModeEnum: getCostModeEnum(),
                 updateRules: {}
             }
         },
