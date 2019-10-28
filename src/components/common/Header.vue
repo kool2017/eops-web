@@ -20,11 +20,11 @@
                     </div>
                 </div>
                 <span style="line-height:17px;margin-right: 20px" slot="reference">
-                <el-badge v-if="notifySize > 0" :value="notifySize" style="line-height:17px">
-                    <el-button type="primary" size="medium" icon="el-icon-bell" circle></el-button>
-                </el-badge>
+                    <el-badge v-if="notifySize > 0" :value="notifySize" style="line-height:17px">
+                        <el-button type="primary" size="medium" icon="el-icon-bell" circle></el-button>
+                    </el-badge>
                     <el-button v-else type="primary" size="medium" icon="el-icon-bell" circle></el-button>
-            </span>
+                </span>
             </el-popover>
             <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
