@@ -161,7 +161,6 @@
                         self.viewInfo = {
                             userDtl: pkgOut.data
                         }
-                        console.log(self.viewInfo)
                     })
                     .catch((err) => {
                         console.log(err)
@@ -177,7 +176,6 @@
                     id: localStorage.getItem('userId'),
                     token: localStorage.getItem('token')
                 }
-
 
                 self.$http
                     .post('/eops/user/logout', input)
@@ -236,6 +234,7 @@
                             message: '未读消息更新为已读状态',
                             type: 'success'
                         })
+                        self.$emit('refreshMsg')
                     })
                     .catch((err) => {
                         console.log(err)
@@ -244,7 +243,6 @@
                             type: 'error'
                         })
                     })
-                this.$emit('refreshMsg')
             },
             readAll() {
                 const self = this
@@ -256,6 +254,7 @@
                             message: '所有未读消息更新为已读状态',
                             type: 'success'
                         })
+                        self.$emit('refreshMsg')
                     })
                     .catch((err) => {
                         console.log(err)
@@ -264,7 +263,6 @@
                             type: 'error'
                         })
                     })
-                this.$emit('refreshMsg')
             }
         }
     }

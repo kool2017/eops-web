@@ -97,7 +97,6 @@
             },
             setOnmessageMessage(event) {
                 let self = this
-                console.log('服务端返回：' + event.data)
                 let msg = JSON.parse(event.data)
                 self.$notify({
                     title: '通知',
