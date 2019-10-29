@@ -18,61 +18,61 @@
                                     </el-form-item>
                                     <el-form-item label="报表类型:" prop="reportType" label-width="130px">
                                         <el-select v-model="addInfo.reportType" size="small" clearable>
-                                            <el-option label="1-列表" value="1"></el-option>
-                                            <el-option label="2-表单" value="2"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="sql:" prop="sql" label-width="130px">
-                                        <el-input type="textarea" v-model="addInfo.sql"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="是否展示标题日期:" prop="titleDateFlag" label-width="130px">
-                                        <el-select v-model="addInfo.titleDateFlag" size="small" clearable
-                                                   style="width:100px">
-                                            <el-option label="1-是" value="1"></el-option>
-                                            <el-option label="0-否" value="0"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="标题日期类型:" prop="titleDateType" label-width="130px">
-                                        <el-select v-model="addInfo.titleDateType" size="small" clearable>
-                                            <el-option label="1-日" value="1"></el-option>
-                                            <el-option label="2-月" value="2"></el-option>
-                                            <el-option label="3-季度" value="3"></el-option>
-                                            <el-option label="4-年" value="4"></el-option>
+                                            <el-option v-for="item in reportTypeEnum" :key="item.code"
+                                                       :label="item.desc"
+                                                       :value="item.code"></el-option>
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="标题:" prop="title" label-width="130px">
                                         <el-input v-model="addInfo.title" size="small" maxlength="100"></el-input>
                                     </el-form-item>
+                                    <el-form-item label="是否展示标题日期:" prop="titleDateFlag" label-width="130px">
+                                        <el-select v-model="addInfo.titleDateFlag" size="small" clearable
+                                                   style="width:100px">
+                                            <el-option v-for="item in flagEnum" :key="item.code" :label="item.desc"
+                                                       :value="item.code"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="标题日期类型:" prop="titleDateType" label-width="130px">
+                                        <el-select v-model="addInfo.titleDateType" size="small" clearable>
+                                            <el-option v-for="item in titleDateTypeEnum" :key="item.code"
+                                                       :label="item.desc"
+                                                       :value="item.code"></el-option>
+                                        </el-select>
+                                    </el-form-item>
                                     <el-form-item label="是否展示报表编号:" prop="reportNoFlag" label-width="130px">
                                         <el-select v-model="addInfo.reportNoFlag" size="small" clearable
                                                    style="width:100px">
-                                            <el-option label="1-是" value="1"></el-option>
-                                            <el-option label="0-否" value="0"></el-option>
+                                            <el-option v-for="item in flagEnum" :key="item.code" :label="item.desc"
+                                                       :value="item.code"></el-option>
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="是否展示制表时间:" prop="createDateFlag" label-width="130px">
                                         <el-select v-model="addInfo.createDateFlag" size="small" clearable
                                                    style="width:100px">
-                                            <el-option label="1-是" value="1"></el-option>
-                                            <el-option label="0-否" value="0"></el-option>
+                                            <el-option v-for="item in flagEnum" :key="item.code" :label="item.desc"
+                                                       :value="item.code"></el-option>
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="是否展示制表人:" prop="createUserFlag" label-width="130px">
                                         <el-select v-model="addInfo.createUserFlag" size="small" clearable
                                                    style="width:100px">
-                                            <el-option label="1-是" value="1"></el-option>
-                                            <el-option label="0-否" value="0"></el-option>
+                                            <el-option v-for="item in flagEnum" :key="item.code" :label="item.desc"
+                                                       :value="item.code"></el-option>
                                         </el-select>
                                     </el-form-item>
                                     <div v-if="addInfo.reportType == 1">
                                         <el-form-item label="是否展示序号:" prop="seqFlag" label-width="130px">
                                             <el-select v-model="addInfo.seqFlag" size="small" clearable
                                                        style="width:100px">
-                                                <el-option label="1-是" value="1"></el-option>
-                                                <el-option label="0-否" value="0"></el-option>
+                                                <el-option v-for="item in flagEnum" :key="item.code" :label="item.desc"
+                                                           :value="item.code"></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </div>
+                                    <el-form-item label="sql:" prop="sql" label-width="130px">
+                                        <el-input type="textarea" v-model="addInfo.sql"></el-input>
+                                    </el-form-item>
                                     <span><i class="el-icon-edit"></i>字段信息:</span>
                                     <hr class="split"/>
                                     <span><el-button type="primary"
@@ -122,7 +122,7 @@
                                 </div>
                             </el-col>
                             <el-col :span="12">
-                                <div v-if="addInfo.reportType == '1'">
+                                <div v-if="addInfo.reportType == 1">
                                     <report-table :title-date-flag="addInfo.titleDateFlag"
                                                   :title="addInfo.title"
                                                   :report-no-flag="addInfo.reportNoFlag"
@@ -131,7 +131,7 @@
                                                   :seq-flag="addInfo.seqFlag"
                                                   :columns="columns"></report-table>
                                 </div>
-                                <div v-else-if="addInfo.reportType == '2'">
+                                <div v-else-if="addInfo.reportType == 2">
                                     <report-form :title-date-flag="addInfo.titleDateFlag"
                                                  :title="addInfo.title"
                                                  :report-no-flag="addInfo.reportNoFlag"
@@ -159,6 +159,7 @@
     import addParam from './AddParam'
     import reportForm from "./ReportForm"
     import reportTable from "./ReportTable"
+    import {getReportTypeEnum, getFlagEnum, getDateTypeEnum, getParamTypeDesc} from '../../../../enum/BiEnum'
 
     export default {
         components: {addColumn, addParam, reportForm, reportTable},
@@ -171,20 +172,23 @@
         },
         data() {
             return {
+                reportTypeEnum: getReportTypeEnum(),
+                flagEnum: getFlagEnum(),
+                titleDateTypeEnum: getDateTypeEnum(),
                 addInfo: {
                     reportType: null,
                     reportCode: null,
                     reportName: null,
-                    titleDateFlag: '1',
-                    titleDateType: '1',
+                    titleDateFlag: 0,
+                    titleDateType: null,
                     title: null,
-                    reportNoFlag: '1',
-                    createDateFlag: '1',
-                    createUserFlag: '1',
-                    seqFlag: '1',
+                    reportNoFlag: 1,
+                    createDateFlag: 1,
+                    createUserFlag: 1,
+                    seqFlag: 1,
                     json: {
                         titleDate: {
-                            flag: '1',
+                            flag: 1,
                             type: null
                         }
                     }
@@ -261,27 +265,12 @@
             },
             addParam(val) {
                 if (val != null) {
-                    val.paramType_str = this.paramTypeStr(val.paramType)
+                    val.paramType_str = getParamTypeDesc(val.paramType)
                     this.params.push(val)
                 }
             },
             deleteParam(index, row) {
                 this.params.splice(index, 1)
-            },
-            paramTypeStr(paramType) {
-                let paramTypeStr = ''
-                if (paramType == 1) {
-                    paramTypeStr = '文本框'
-                } else if (paramType == 2) {
-                    paramTypeStr = '文本域'
-                } else if (paramType == 3) {
-                    paramTypeStr = '日期'
-                } else if (paramType == 4) {
-                    paramTypeStr = '单选框'
-                } else if (paramType == 5) {
-                    paramTypeStr = '复选框'
-                }
-                return paramTypeStr
             },
             modalClose() {
                 let afterAddInfo = JSON.parse(JSON.stringify(this.addInfo))
@@ -289,19 +278,20 @@
                     reportType: null,
                     reportCode: null,
                     reportName: null,
-                    titleDateFlag: '1',
-                    titleDateType: '1',
+                    titleDateFlag: 0,
+                    titleDateType: null,
                     title: null,
-                    reportNoFlag: '1',
-                    createDateFlag: '1',
-                    createUserFlag: '1',
-                    seqFlag: '1',
+                    reportNoFlag: 1,
+                    createDateFlag: 1,
+                    createUserFlag: 1,
+                    seqFlag: 1,
                     json: {
                         titleDate: {
-                            flag: '1',
+                            flag: 1,
                             type: null
                         }
-                    }}
+                    }
+                }
                 this.columns = []
                 this.params = []
                 this.$emit('afterClose', afterAddInfo)

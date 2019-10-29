@@ -65,6 +65,7 @@
 <script>
     import addProduct from './Add'
     import updateProduct from './Update'
+    import {getProductTypeDesc} from '../../../../enum/CsEnum'
 
     export default {
         name:"ProductMng",
@@ -124,7 +125,7 @@
                         for (let index = 0; index < self.retList.length; index++) {
                             const element = self.retList[index];
                             if (element.productType != null) {
-                                element.productType_str = self.productTypeStr(element.productType)
+                                element.productType_str = getProductTypeDesc(element.productType)
                             }
                         }
                     })
@@ -198,13 +199,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            productTypeStr(productType) {
-                let productTypeStr = ''
-                if (productType == 1) {
-                    productTypeStr = 'dataflow元数据'
-                }
-                return productTypeStr;
             }
         }
     }

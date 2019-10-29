@@ -74,6 +74,7 @@
 <script>
     import addDvc from './Add'
     import updateDvc from './Update'
+    import {getDeviceStateDesc} from '../../../../enum/DvcEnum'
 
     export default {
         components: {addDvc, updateDvc},
@@ -134,7 +135,7 @@
                             let element = self.retList[index]
                             element.createdTime_str = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
                             element.updatedTime_str = self.$moment(element.updatedTime).format('YYYY-MM-DD HH:mm:ss')
-                            element.state_str = self.stateStr(element.state)
+                            element.state_str = getDeviceStateDesc(element.state)
                         }
                     })
                     .catch((err) => {
@@ -207,19 +208,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '维修中'
-                } else if (state == 3) {
-                    stateStr = '损坏'
-                } else if (state == 4) {
-                    stateStr = '报废'
-                }
-                return stateStr;
             }
         }
     }

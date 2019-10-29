@@ -5,7 +5,7 @@
             <el-card>
                     <span>
                         <i class="el-icon-edit"></i> 应用信息:</span>
-                <hr class="split" />
+                <hr class="split"/>
                 <div class="card-context">
                     <el-row :gutter="20">
                         <el-col :span="20">
@@ -14,8 +14,8 @@
                             </el-form-item>
                             <el-form-item label="状态:" prop="state">
                                 <el-select v-model="updateInfo.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+    import {getAppStateEnum} from '../../../../enum/SysEnum'
+
     export default {
         name: "Update",
         props: {
@@ -40,8 +42,9 @@
             },
             updateInfo: {}
         },
-        data(){
-            return{
+        data() {
+            return {
+                stateEnum: getAppStateEnum(),
                 updateRules: {
                     appid: [
                         {required: true, message: '请输入应用id', trigger: 'blur'},
@@ -57,7 +60,7 @@
                 }
             }
         },
-        methods:{
+        methods: {
             update() {
                 let self = this
                 let validRet = false

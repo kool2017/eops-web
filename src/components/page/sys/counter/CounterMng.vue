@@ -68,6 +68,7 @@
 <script>
     import addCnt from './Add'
     import updateCnt from './Update'
+    import {getCounterStateDesc} from '../../../../enum/SysEnum'
 
     export default {
         components: {addCnt, updateCnt},
@@ -126,7 +127,7 @@
                         for (let index = 0; index < self.retList.length; index++) {
                             const element = self.retList[index];
                             if (element.state != null) {
-                                element.state_str = self.stateStr(element.state)
+                                element.state_str = getCounterStateDesc(element.state)
                             }
                         }
                     })
@@ -202,15 +203,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '溢出'
-                }
-                return stateStr;
             }
         }
     }

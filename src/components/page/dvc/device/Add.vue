@@ -18,10 +18,8 @@
                             </el-form-item>
                             <el-form-item label="状态:" prop="state">
                                 <el-select v-model="addInfo.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-维修中" value="2"></el-option>
-                                    <el-option label="3-损坏" value="3"></el-option>
-                                    <el-option label="4-报废" value="4"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -37,6 +35,8 @@
 </template>
 
 <script>
+    import {getDeviceStateEnum} from '../../../../enum/DvcEnum'
+
     export default {
         name: "Add",
         props: {
@@ -47,6 +47,7 @@
         },
         data() {
             return {
+                stateEnum: getDeviceStateEnum(),
                 addInfo: {
                     deviceName: '',
                     state: '',

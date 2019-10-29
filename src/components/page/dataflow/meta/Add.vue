@@ -18,10 +18,8 @@
                                 </el-form-item>
                                 <el-form-item label="数据采集渠道:" prop="readerType">
                                     <el-select v-model="addInfo.readerType" size="small" clearable>
-                                        <el-option label="1-HTTP IN" value="1"></el-option>
-                                        <el-option label="2-HTTP OUT" value="2"></el-option>
-                                        <el-option label="3-FTP" value="3"></el-option>
-                                        <el-option label="4-中间库" value="4"></el-option>
+                                        <el-option v-for="item in readerTypeEnum" :key="item.code" :label="item.desc"
+                                                   :value="item.code"></el-option>
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="文件名(表名):" prop="destName">
@@ -37,12 +35,8 @@
                             <el-col :span="10" :offset="1">
                                 <el-form-item label="保存形式:" prop="writerType">
                                     <el-select v-model="addInfo.writerType" size="small" clearable>
-                                        <el-option label="1-MySql" value="1"></el-option>
-                                        <el-option label="2-文件" value="2"></el-option>
-                                        <el-option label="3-HBase" value="3"></el-option>
-                                        <el-option label="4-Hive" value="4"></el-option>
-                                        <el-option label="5-Kafka" value="5"></el-option>
-                                        <el-option label="6-ES" value="6"></el-option>
+                                        <el-option v-for="item in writerTypeEnum" :key="item.code" :label="item.desc"
+                                                   :value="item.code"></el-option>
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="http地址:" prop="readUrl">
@@ -50,8 +44,8 @@
                                 </el-form-item>
                                 <el-form-item label="增量标志:" prop="addFlag">
                                     <el-select v-model="addInfo.addFlag" size="small" clearable>
-                                        <el-option label="1-全量" value="1"></el-option>
-                                        <el-option label="2-增量" value="2"></el-option>
+                                        <el-option v-for="item in addFlagEnum" :key="item.code" :label="item.desc"
+                                                   :value="item.code"></el-option>
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="增量条件字段:" prop="addColumn">
@@ -80,7 +74,8 @@
                                     <el-table-column prop="comment" label="注释" width="300"></el-table-column>
                                     <el-table-column fixed="right" label="操作" width="100">
                                         <template slot-scope="scope">
-                                            <el-tooltip effect="dark" content="删除" placement="top" :open-delay="tooltipOpenDelay">
+                                            <el-tooltip effect="dark" content="删除" placement="top"
+                                                        :open-delay="tooltipOpenDelay">
                                                 <el-button type="text" icon="el-icon-remove-outline"
                                                            @click="del(scope.$index, scope.row)">
                                                 </el-button>
@@ -132,6 +127,8 @@
 </template>
 
 <script>
+    import {getReaderTypeEnum, getWriterTypeEnum, getAddFlagEnum} from '../../../../enum/DfEnum'
+
     export default {
         name: "Add",
         props: {
@@ -142,6 +139,9 @@
         },
         data() {
             return {
+                readerTypeEnum: getReaderTypeEnum(),
+                writerTypeEnum: getWriterTypeEnum(),
+                addFlagEnum: getAddFlagEnum(),
                 addInfo: {},
                 addRules: {},
                 columnMeta: [],
@@ -150,7 +150,7 @@
                 columnRules: {},
                 allAppid: [],
                 timeout: null,
-                tooltipOpenDelay:1000
+                tooltipOpenDelay: 1000
             }
         },
         methods: {

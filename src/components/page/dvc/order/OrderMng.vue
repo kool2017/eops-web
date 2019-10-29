@@ -19,12 +19,8 @@
                             </el-col>
                             <el-col :span="4">
                                 <el-select v-model="condition.state" size="small" clearable>
-                                    <el-option label="1-已提交" value="1"></el-option>
-                                    <el-option label="2-待施工" value="2"></el-option>
-                                    <el-option label="3-施工中" value="3"></el-option>
-                                    <el-option label="4-停工" value="4"></el-option>
-                                    <el-option label="5-完工" value="5"></el-option>
-                                    <el-option label="6-结束" value="6"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-col>
                             <el-col :span="2">
@@ -142,6 +138,7 @@
     import score from './Score'
     import cancel from './Cancel'
     import showDetail from './Detail'
+    import {getOrderStateEnum, getOrderStateDesc} from '../../../../enum/DvcEnum'
 
     export default {
         components: {
@@ -159,6 +156,7 @@
         name: "OrderMng",
         data() {
             return {
+                stateEnum: getOrderStateEnum(),
                 condition: {
                     submitPhone: "",
                     state: ""
@@ -181,7 +179,7 @@
                 finishRepairFormVisible: false,
                 scoreFormVisible: false,
                 cancelFormVisible: false,
-                showDetailFormVisible:false,
+                showDetailFormVisible: false,
                 isDisabledSchedule: true,
                 isDisabledReschedule: true,
                 isDisabledAccept: true,
@@ -242,7 +240,7 @@
                             let element = self.retList[index]
                             element.createdTime = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
                             element.updatedTime = self.$moment(element.updatedTime).format('YYYY-MM-DD HH:mm:ss')
-                            element.state_str = self.stateStr(element.state)
+                            element.state_str = getOrderStateDesc(element.state)
                         }
                     })
                     .catch((err) => {
@@ -460,23 +458,6 @@
                 self.orderInfo.orderId = self.orderInfo.id
                 self.showDetailFormVisible = true
                 self.$refs.showDetailForm.query()
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '已提交'
-                } else if (state == 2) {
-                    stateStr = '待施工'
-                } else if (state == 3) {
-                    stateStr = '施工中'
-                } else if (state == 4) {
-                    stateStr = '停工'
-                } else if (state == 5) {
-                    stateStr = '完工'
-                } else if (state == 6) {
-                    stateStr = '结束'
-                }
-                return stateStr;
             }
         }
     }

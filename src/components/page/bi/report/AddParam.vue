@@ -15,21 +15,20 @@
                             <el-form-item label="参数控件类型:" prop="paramType">
                                 <el-select v-model="addInfo.paramType" size="small" clearable
                                            style="width:100px">
-                                    <el-option label="1-文本框" value="1"></el-option>
-                                    <el-option label="2-文本域" value="2"></el-option>
-                                    <el-option label="3-日期" value="3"></el-option>
-                                    <el-option label="4-单选框" value="4"></el-option>
-                                    <el-option label="5-复选框" value="5"></el-option>
+                                    <el-option v-for="item in paramTypeEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="参数名称:" prop="paramName">
                                 <el-input v-model="addInfo.paramName" size="small" maxlength="100"></el-input>
                             </el-form-item>
                             <el-form-item label="默认值:" prop="defaultValue">
-                                <el-input type="textarea" v-model="addInfo.defaultValue" size="small" maxlength="255"></el-input>
+                                <el-input type="textarea" v-model="addInfo.defaultValue" size="small"
+                                          maxlength="255"></el-input>
                             </el-form-item>
                             <el-form-item label="值域:" prop="valueRange">
-                                <el-input type="textarea" v-model="addInfo.valueRange" size="small" maxlength="255"></el-input>
+                                <el-input type="textarea" v-model="addInfo.valueRange" size="small"
+                                          maxlength="255"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -44,6 +43,8 @@
 </template>
 
 <script>
+    import {getParamTypeEnum} from '../../../../enum/BiEnum'
+
     export default {
         name: "AddParam",
         props: {
@@ -54,6 +55,7 @@
         },
         data() {
             return {
+                paramTypeEnum: getParamTypeEnum(),
                 addInfo: {},
                 addRules: {},
                 afterAddInfo: {}

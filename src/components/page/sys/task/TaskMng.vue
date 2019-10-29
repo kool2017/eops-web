@@ -13,9 +13,8 @@
                             </el-col>
                             <el-col :span="3">
                                 <el-select v-model="condition.taskType" size="small" clearable>
-                                    <el-option label="1-数据流定时任务" value="1"></el-option>
-                                    <el-option label="2-http请求任务" value="2"></el-option>
-                                    <el-option label="3-计费任务" value="3"></el-option>
+                                    <el-option v-for="item in taskTypeEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-col>
                             <el-col :span="3">
@@ -29,9 +28,8 @@
                             </el-col>
                             <el-col :span="3">
                                 <el-select v-model="condition.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
-                                    <el-option label="3-锁定" value="3"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-col>
                             <el-col :span="2">
@@ -83,18 +81,21 @@
         </el-row>
         <add-task :visible.sync="addFormVisible" @afterClose="refresh"></add-task>
         <update-task :visible.sync="updateFormVisible" :update-info="updateInitInfo"
-                    @afterClose="refresh"></update-task>
+                     @afterClose="refresh"></update-task>
     </div>
 </template>
 <script>
     import addTask from './Add'
     import updateTask from './Update'
+    import {getTaskTypeEnum, getTaskTypeDesc, getTaskCfgStateEnum, getTaskCfgStateDesc} from '../../../../enum/SysEnum'
 
     export default {
-        name:"AppMng",
+        name: "AppMng",
         components: {addTask, updateTask},
         data() {
             return {
+                taskTypeEnum: getTaskTypeEnum(),
+                stateEnum: getTaskCfgStateEnum(),
                 condition: {},
                 retList: [],
                 page: {
@@ -148,10 +149,10 @@
                         for (let index = 0; index < self.retList.length; index++) {
                             const element = self.retList[index];
                             if (element.state != null) {
-                                element.state_str = self.stateStr(element.state)
+                                element.state_str = getTaskCfgStateDesc(element.state)
                             }
                             if (element.taskType != null) {
-                                element.taskType_str = self.taskTypeStr(element.taskType)
+                                element.taskType_str = getTaskTypeDesc(element.taskType)
                             }
                         }
                     })
@@ -227,28 +228,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            taskTypeStr(taskType) {
-                let taskTypeStr = ''
-                if (taskType == 1) {
-                    taskTypeStr = '数据流定时任务'
-                } else if (taskType == 2) {
-                    taskTypeStr = 'http请求任务'
-                } else if (taskType == 3) {
-                    taskTypeStr = '计费定时任务'
-                }
-                return taskTypeStr;
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '关闭'
-                } else if (state == 3) {
-                    stateStr = '锁定'
-                }
-                return stateStr;
             }
         }
     }

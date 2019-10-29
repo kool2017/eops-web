@@ -11,9 +11,8 @@
                         <el-col :span="10">
                             <el-form-item label="任务类型:" prop="taskType">
                                 <el-select v-model="addInfo.taskType" size="small" clearable>
-                                    <el-option label="1-数据流定时任务" value="1"></el-option>
-                                    <el-option label="2-http请求任务" value="2"></el-option>
-                                    <el-option label="3-计费任务" value="3"></el-option>
+                                    <el-option v-for="item in taskTypeEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="cron表达式:" prop="cron">
@@ -24,9 +23,8 @@
                             </el-form-item>
                             <el-form-item label="任务配置状态:" prop="state">
                                 <el-select v-model="addInfo.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
-                                    <el-option label="3-锁定" value="3"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -53,6 +51,8 @@
 </template>
 
 <script>
+    import {getTaskTypeEnum, getTaskCfgStateEnum} from '../../../../enum/SysEnum'
+
     export default {
         name: "Add",
         props: {
@@ -63,6 +63,8 @@
         },
         data() {
             return {
+                taskTypeEnum: getTaskTypeEnum(),
+                stateEnum: getTaskCfgStateEnum(),
                 addInfo: {},
                 addRules: {
                     taskType: [

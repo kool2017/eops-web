@@ -19,16 +19,8 @@
                             </el-col>
                             <el-col :span="4">
                                 <el-select v-model="condition.recordType" size="small" clearable>
-                                    <el-option label="1-报修" value="1"></el-option>
-                                    <el-option label="2-派单" value="2"></el-option>
-                                    <el-option label="3-转派" value="3"></el-option>
-                                    <el-option label="4-接单" value="4"></el-option>
-                                    <el-option label="5-维修登记" value="5"></el-option>
-                                    <el-option label="6-停工" value="6"></el-option>
-                                    <el-option label="7-留言" value="7"></el-option>
-                                    <el-option label="8-完工" value="8"></el-option>
-                                    <el-option label="9-评价" value="9"></el-option>
-                                    <el-option label="10-关闭工单" value="10"></el-option>
+                                    <el-option v-for="item in recordTypeEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-col>
                             <el-col :span="2">
@@ -77,10 +69,13 @@
 </template>
 
 <script>
+    import {getRecordTypeEnum, getRecordTypeDesc} from '../../../../enum/DvcEnum'
+
     export default {
         name: "RecordMng",
         data() {
             return {
+                recordTypeEnum: getRecordTypeEnum(),
                 condition: {},
                 retList: [],
                 page: {
@@ -128,7 +123,7 @@
                             let element = self.retList[index]
                             element.createdTime = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
                             element.updatedTime = self.$moment(element.updatedTime).format('YYYY-MM-DD HH:mm:ss')
-                            element.recordType_str = self.recordTypeStr(element.recordType)
+                            element.recordType_str = getRecordTypeDesc(element.recordType)
                         }
                     })
                     .catch((err) => {
@@ -153,31 +148,6 @@
             selectOne(val) {
                 this.init()
                 this.selectedInfo = val
-            },
-            recordTypeStr(recordType) {
-                let recordTypeStr = ''
-                if (recordType == 1) {
-                    recordTypeStr = '报修'
-                } else if (recordType == 2) {
-                    recordTypeStr = '派单'
-                } else if (recordType == 3) {
-                    recordTypeStr = '转派'
-                } else if (recordType == 4) {
-                    recordTypeStr = '接单'
-                } else if (recordType == 5) {
-                    recordTypeStr = '维修登记'
-                } else if (recordType == 6) {
-                    recordTypeStr = '停工'
-                }else if (recordType == 7) {
-                    recordTypeStr = '留言'
-                }else if (recordType == 8) {
-                    recordTypeStr = '完工'
-                }else if (recordType == 9) {
-                    recordTypeStr = '评价'
-                }else if (recordType == 10) {
-                    recordTypeStr = '关闭工单'
-                }
-                return recordTypeStr;
             }
         }
     }

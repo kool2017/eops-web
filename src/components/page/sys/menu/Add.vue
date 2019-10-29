@@ -14,7 +14,8 @@
                                 <el-input v-model="addInfo.menuCode" size="small" maxlength="10"></el-input>
                             </el-form-item>
                             <el-form-item label="上级菜单:" prop="fatherCode">
-                                <el-input v-model="addInfo.fatherCode" size="small" maxlength="10" :readonly="notAddRoot"></el-input>
+                                <el-input v-model="addInfo.fatherCode" size="small" maxlength="10"
+                                          :readonly="notAddRoot"></el-input>
                             </el-form-item>
                             <el-form-item label="深度:" prop="deep">
                                 <el-input v-model.number="addInfo.deep" size="small" :readonly="notAddRoot"></el-input>
@@ -31,7 +32,8 @@
                                 <el-input v-model="addInfo.title" size="small" maxlength="100"></el-input>
                             </el-form-item>
                             <el-form-item label="根菜单:" prop="rootCode">
-                                <el-input v-model="addInfo.rootCode" size="small" maxlength="10" :readonly="notAddRoot"></el-input>
+                                <el-input v-model="addInfo.rootCode" size="small" maxlength="10"
+                                          :readonly="notAddRoot"></el-input>
                             </el-form-item>
                             <el-form-item label="序号:" prop="seq">
                                 <el-input v-model.number="addInfo.seq" size="small"></el-input>
@@ -41,8 +43,8 @@
                             </el-form-item>
                             <el-form-item label="状态:" prop="state">
                                 <el-select v-model="addInfo.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -58,6 +60,8 @@
 </template>
 
 <script>
+    import {getMenuStateEnum} from '../../../../enum/SysEnum'
+
     export default {
         name: "Add",
         props: {
@@ -66,13 +70,14 @@
                 default: false
             },
             addInfo: {},
-            notAddRoot:{
-                type:Boolean,
-                default:true
+            notAddRoot: {
+                type: Boolean,
+                default: true
             }
         },
         data() {
             return {
+                stateEnum: getMenuStateEnum(),
                 addRules: {
                     menuCode: [
                         {required: true, message: '请输入菜单编码', trigger: 'blur'},

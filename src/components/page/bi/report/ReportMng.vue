@@ -85,7 +85,7 @@
                                 <span><i class="el-icon-view"></i>报表信息:</span>
                                 <hr class="split"/>
                                 <div class="card-context">
-                                    <div v-if="selectedReportInfo.reportType == '1'">
+                                    <div v-if="selectedReportInfo.reportType == 1">
                                         <report-table :title-date-flag="selectedReportInfo.titleDateFlag"
                                                       :title="selectedReportInfo.title"
                                                       :report-no-flag="selectedReportInfo.reportNoFlag"
@@ -94,7 +94,7 @@
                                                       :seq-flag="selectedReportInfo.seqFlag"
                                                       :columns="selectedReportInfo.columns"></report-table>
                                     </div>
-                                    <div v-else-if="selectedReportInfo.reportType == '2'">
+                                    <div v-else-if="selectedReportInfo.reportType == 2">
                                         <report-form :title-date-flag="selectedReportInfo.titleDateFlag"
                                                      :title="selectedReportInfo.title"
                                                      :report-no-flag="selectedReportInfo.reportNoFlag"
@@ -178,6 +178,7 @@
     import AuthReport from "./AuthReport"
     import reportForm from "./ReportForm"
     import reportTable from "./ReportTable"
+    import {getParamTypeDesc, getReportRecordStateDesc} from '../../../../enum/BiEnum'
 
     export default {
         components: {AddReport, UpdateReport, CreateReport, AuthReport, reportForm, reportTable},
@@ -255,7 +256,6 @@
             },
             selectOne(val) {
                 this.selectedReportInfo = val
-                this.selectedReportInfo.reportType = val.reportType.toString()
                 const json = JSON.parse(this.selectedReportInfo.json)
                 const columns = json.col
                 this.selectedReportInfo.columns = columns
@@ -277,7 +277,7 @@
                 let json = JSON.parse(data.json)
                 this.updateInitInfo = {
                     id: data.id,
-                    reportType: data.reportType.toString(),
+                    reportType: data.reportType,
                     reportCode: data.reportCode,
                     reportName: data.reportName,
                     titleDateFlag: json.titleDate.flag,
@@ -292,7 +292,7 @@
                     sql: data.sql
                 }
                 for (let i = 0; i < this.updateInitInfo.params.length; i++) {
-                    this.updateInitInfo.params[i].paramType_str = this.paramTypeStr(this.updateInitInfo.params[i].paramType)
+                    this.updateInitInfo.params[i].paramType_str = getParamTypeDesc(this.updateInitInfo.params[i].paramType)
                 }
                 this.updateFormVisible = true
             },
@@ -409,7 +409,7 @@
                             const element = self.retList[index];
                             element.createdTime_str = self.$moment(element.createdTime).format('YYYY-MM-DD HH:mm:ss')
                             if (element.state != null) {
-                                element.state_str = self.stateStr(element.state)
+                                element.state_str = getReportRecordStateDesc(element.state)
                             }
                         }
                     })
@@ -464,32 +464,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            paramTypeStr(paramType) {
-                let paramTypeStr = ''
-                if (paramType == 1) {
-                    paramTypeStr = '文本框'
-                } else if (paramType == 2) {
-                    paramTypeStr = '文本域'
-                } else if (paramType == 3) {
-                    paramTypeStr = '日期'
-                } else if (paramType == 4) {
-                    paramTypeStr = '单选框'
-                } else if (paramType == 5) {
-                    paramTypeStr = '复选框'
-                }
-                return paramTypeStr
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '已生成'
-                } else if (state == 2) {
-                    stateStr = '已删除'
-                } else if (state == 3) {
-                    stateStr = '生成中'
-                }
-                return stateStr
             }
         }
     }

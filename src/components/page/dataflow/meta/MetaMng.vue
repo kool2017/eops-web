@@ -83,6 +83,7 @@
 <script>
     import addMeta from './Add'
     import updateMeta from './Update'
+    import {getReaderTypeDesc, getWriterTypeDesc, getAddFlagDesc} from '../../../../enum/DfEnum'
 
     export default {
         name: "AppMng",
@@ -142,13 +143,13 @@
                         for (let index = 0; index < self.retList.length; index++) {
                             const element = self.retList[index];
                             if (element.readerType != null) {
-                                element.readerType_str = self.readerTypeStr(element.readerType)
+                                element.readerType_str = getReaderTypeDesc(element.readerType)
                             }
                             if (element.writerType != null) {
-                                element.writerType_str = self.writerTypeStr(element.writerType)
+                                element.writerType_str = getWriterTypeDesc(element.writerType)
                             }
                             if (element.addFlag != null) {
-                                element.addFlag_str = self.addFlagStr(element.addFlag)
+                                element.addFlag_str = getAddFlagDesc(element.addFlag)
                             }
                         }
                     })
@@ -224,45 +225,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            readerTypeStr(readerType) {
-                let readerTypeStr = ''
-                if (readerType == 1) {
-                    readerTypeStr = 'HTTP IN'
-                } else if (readerType == 2) {
-                    readerTypeStr = 'HTTP OUT'
-                } else if (readerType == 3) {
-                    readerTypeStr = 'FTP'
-                } else if (readerType == 4) {
-                    readerTypeStr = '中间库'
-                }
-                return readerTypeStr;
-            },
-            writerTypeStr(writerType) {
-                let writerTypeStr = ''
-                if (writerType == 1) {
-                    writerTypeStr = 'MySql'
-                } else if (writerType == 2) {
-                    writerTypeStr = '文件'
-                } else if (writerType == 3) {
-                    writerTypeStr = 'HBase'
-                } else if (writerType == 4) {
-                    writerTypeStr = 'Hive'
-                } else if (writerType == 5) {
-                    writerTypeStr = 'Kafka'
-                } else if (writerType == 6) {
-                    writerTypeStr = 'ES'
-                }
-                return writerTypeStr;
-            },
-            addFlagStr(addFlag) {
-                let addFlagStr = ''
-                if (addFlag == 1) {
-                    addFlagStr = '全量'
-                } else if (addFlag == 2) {
-                    addFlagStr = '增量'
-                }
-                return addFlagStr;
             }
         }
     }

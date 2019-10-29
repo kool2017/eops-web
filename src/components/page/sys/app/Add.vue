@@ -14,8 +14,8 @@
                             </el-form-item>
                             <el-form-item label="状态:" prop="state">
                                 <el-select v-model="addInfo.state" size="small" clearable>
-                                    <el-option label="1-正常" value="1"></el-option>
-                                    <el-option label="2-关闭" value="2"></el-option>
+                                    <el-option v-for="item in stateEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+    import {getAppStateEnum} from '../../../../enum/SysEnum'
+
     export default {
         name: "Add",
         props: {
@@ -41,6 +43,7 @@
         },
         data() {
             return {
+                stateEnum: getAppStateEnum(),
                 addInfo: {
                     appid: '',
                     appName: '',

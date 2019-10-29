@@ -73,7 +73,8 @@
             </el-col>
         </el-row>
         <add-user :visible.sync="addFormVisible" @afterClose="refresh"></add-user>
-        <update-user :visible.sync="updateFormVisible" :update-info="updateInitInfo" @afterClose="refresh"></update-user>
+        <update-user :visible.sync="updateFormVisible" :update-info="updateInitInfo"
+                     @afterClose="refresh"></update-user>
         <view-user :visible.sync="viewFormVisible" :view-info="viewInitInfo"></view-user>
         <set-role :visible.sync="roleTransferVisible" :user-info="roleInitInfo" :role-info="roleInfo"></set-role>
     </div>
@@ -83,6 +84,7 @@
     import updateUser from './Edit'
     import viewUser from './Detail'
     import setRole from './SetRole'
+    import {getUserStateDesc} from '../../../../enum/SysEnum'
 
     export default {
         components: {addUser, updateUser, viewUser, setRole},
@@ -100,7 +102,7 @@
                 updateInitInfo: {},
                 viewInitInfo: {},
                 roleInitInfo: {},
-                roleInfo:{
+                roleInfo: {
                     userRole: [],
                     allRole: []
                 },
@@ -152,7 +154,7 @@
                         self.page.pageCount = pkgOut.pageCount
                         for (let index = 0; index < self.retList.length; index++) {
                             let element = self.retList[index]
-                            element.state_str = self.stateStr(element.state)
+                            element.state_str = getUserStateDesc(element.state)
                         }
                     })
                     .catch((err) => {
@@ -302,18 +304,6 @@
                         })
                 }).catch((erro) => {
                 })
-
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '关闭'
-                } else if (state == 3) {
-                    stateStr = '锁定'
-                }
-                return stateStr;
             }
         }
     }

@@ -16,7 +16,8 @@
                             </el-form-item>
                             <el-form-item label="产品类型:" prop="productType">
                                 <el-select v-model="addInfo.productType" size="small" clearable>
-                                    <el-option label="1-dataflow元数据" value="1"></el-option>
+                                    <el-option v-for="item in productTypeEnum" :key="item.code" :label="item.desc"
+                                               :value="item.code"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="数据唯一标识:" prop="dataKey">
@@ -35,6 +36,8 @@
 </template>
 
 <script>
+    import {getProductTypeEnum} from '../../../../enum/CsEnum'
+
     export default {
         name: "Add",
         props: {
@@ -45,6 +48,7 @@
         },
         data() {
             return {
+                productTypeEnum: getProductTypeEnum(),
                 addInfo: {},
                 addRules: {}
             }

@@ -166,6 +166,7 @@
 <script>
     import addMenu from './Add'
     import updateMenu from './Update'
+    import {getMenuStateDesc} from '../../../../enum/SysEnum'
 
     export default {
         components: {addMenu, updateMenu},
@@ -230,7 +231,7 @@
                                     node.viewPath = element.viewPath
                                     node.icon = element.icon
                                     node.state = element.state
-                                    node.state_str = self.stateStr(node.state)
+                                    node.state_str = getMenuStateDesc(node.state)
                                     node.subMenus = self.getSubMenus(node, menuArray)
                                     self.treeData.push(node)
                                 }
@@ -270,7 +271,7 @@
                             item.viewPath = element.viewPath
                             item.icon = element.icon
                             item.state = element.state
-                            item.state_str = this.stateStr(node.state)
+                            item.state_str = getMenuStateDesc(node.state)
                             item.subMenus = this.getSubMenus(item, menuArray)
                             subArray.push(item)
                         }
@@ -367,15 +368,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '关闭'
-                }
-                return stateStr;
             }
         }
     }

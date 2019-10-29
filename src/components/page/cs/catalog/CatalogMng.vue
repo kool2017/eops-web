@@ -92,7 +92,7 @@
 <script>
     import addApp from './Add'
     import updateApp from './Update'
-    import {getUnitsDesc, getCostModeDesc} from '../../../../enum/cs/CsEnum'
+    import {getUnitsDesc, getCostModeDesc} from '../../../../enum/CsEnum'
 
     export default {
         name: "CatalogMng",
@@ -156,10 +156,10 @@
                                 element.disableTime_str = self.$moment(element.disableTime).format('YYYY-MM-DD HH:mm:ss');
                             }
                             if (element.units != null) {
-                                element.units_str = self.unitsStr(element.units)
+                                element.units_str = getUnitsDesc(element.units)
                             }
                             if (element.costMode != null) {
-                                element.costMode_str = self.costModeStr(element.costMode)
+                                element.costMode_str = getCostModeDesc(element.costMode)
                             }
                         }
                     })
@@ -233,12 +233,6 @@
                         })
                 }).catch((erro) => {
                 })
-            },
-            unitsStr(units) {
-                return getUnitsDesc(units);
-            },
-            costModeStr(costMode) {
-                return getCostModeDesc(costMode);
             }
         }
     }

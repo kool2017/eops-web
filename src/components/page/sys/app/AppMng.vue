@@ -70,9 +70,10 @@
 <script>
     import addApp from './Add'
     import updateApp from './Update'
+    import {getAppStateDesc} from '../../../../enum/SysEnum'
 
     export default {
-        name:"AppMng",
+        name: "AppMng",
         components: {addApp, updateApp},
         data() {
             return {
@@ -129,7 +130,7 @@
                         for (let index = 0; index < self.retList.length; index++) {
                             const element = self.retList[index];
                             if (element.state != null) {
-                                element.state_str = self.stateStr(element.state)
+                                element.state_str = getAppStateDesc(element.state)
                             }
                         }
                     })
@@ -175,15 +176,6 @@
                 }
                 self.updateInitInfo = Object.assign({}, self.selectedInfo)
                 self.updateFormVisible = true
-            },
-            stateStr(state) {
-                let stateStr = ''
-                if (state == 1) {
-                    stateStr = '正常'
-                } else if (state == 2) {
-                    stateStr = '关闭'
-                }
-                return stateStr;
             }
         }
     }

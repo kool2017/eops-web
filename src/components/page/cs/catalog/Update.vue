@@ -44,7 +44,7 @@
 </template>
 
 <script>
-    import {getUnitsEnum, getCostModeEnum} from '../../../../enum/cs/CsEnum'
+    import {getUnitsEnum, getCostModeEnum} from '../../../../enum/CsEnum'
 
     export default {
         name: "Update",
