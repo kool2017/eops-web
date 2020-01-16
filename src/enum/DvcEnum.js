@@ -38,19 +38,27 @@ export function getDeviceStateEnum() {
 var orderStateEnum = [
     {
         code: 1,
-        desc: '正常'
+        desc: '已提交'
     },
     {
         code: 2,
-        desc: '维修中'
+        desc: '待施工'
     },
     {
         code: 3,
-        desc: '损坏'
+        desc: '施工中'
     },
     {
         code: 4,
-        desc: '报废'
+        desc: '停工'
+    },
+    {
+        code: 5,
+        desc: '完工'
+    },
+    {
+        code: 6,
+        desc: '结束'
     }
 ]
 

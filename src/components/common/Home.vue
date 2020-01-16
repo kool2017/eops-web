@@ -167,7 +167,7 @@
         position: absolute;
         top: 105px;
         left: 250px;
-        bottom: 0;
+        bottom: 60px;
         background-color: rgb(228, 237, 252);
     }
 

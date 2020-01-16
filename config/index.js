@@ -36,7 +36,7 @@ module.exports = {
             //     }
             // },
             '/eops': {
-                target: 'http://192.168.110.138:10101',
+                target: 'http://localhost:10101',
                 changeOrigin: true
             }
         },
